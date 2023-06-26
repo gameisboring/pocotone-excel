@@ -1,0 +1,18 @@
+{
+  "script": "[name] 님 [break]별풍선 [value] 개 감사합니다 [break][msg]",
+  "BJID": {
+    "ori": { "plus": ["꿍코톤", "꿍플"], "minus": ["꿍마"] },
+    "yam": { "plus": ["얌코톤", "얌플"], "minus": ["얌마"] },
+    "hiyoko": { "plus": ["히코톤", "히플", "요코톤"], "minus": ["히마"] },
+    "dal": { "plus": ["솜코톤", "솜플"], "minus": ["솜마"] }
+  },
+  "BJIMG": {
+    "ori": "/images/ori.webp",
+    "yam": "/images/yam.webp",
+    "hiyoko": "/images/hiyoko.webp",
+    "dal": "/images/dal.webp",
+    "default": "/images/channels4_profile.jpg"
+  },
+  "SPEAKING_RATE": "1.2",
+  "SPEAKING_VOICE": "ko-KR-Standard-A"
+}

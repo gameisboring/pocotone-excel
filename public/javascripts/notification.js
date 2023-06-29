@@ -1,44 +1,81 @@
 'use strict'
 
 let timerInterval = null
-let ttsUrl = 'http://nstream.kr:1322/'
 let list = new Array()
 var notiPopUpInterval = null
+var notiTerm = 2000
 
 socket.on('news', async function (data) {
   // await sweetAlert(data)
   list.push(data)
-  console.log(list)
 })
-
-socket.on('connect', function (reason) {
-  console.log('conn')
-  notiPopUpInterval = setTimeout(tick, 1000)
-})
+notiPopUpInterval = setTimeout(tick, 1000)
+socket.on('connect', function (reason) {})
 
 async function tick() {
-  console.log(list.length)
+  var ttsReady = false
+  var soundReady = false
+  let ttsUrl = 'http://nstream.kr:1322/'
+
   if (list.length > 0) {
+    console.log(`현재 남은 알림 수 : ${list.length} 개`)
     const el = list.shift()
-    var notiSound = new Audio()
-    var ttsReady = false
-    var soundReady = false
-    setTimeout(tick, 1000)
+    ttsUrl +=
+      tssDialogGen(el, el.config.script) +
+      '/' +
+      el.config.SPEAKING_RATE +
+      '/' +
+      el.config.SPEAKING_VOICE
+
+    let notiTextToSpeach
+    let notiSound
+
+    try {
+      notiTextToSpeach = new Audio(ttsUrl)
+    } catch (error) {
+      console.log('notiTextToSpeach', error)
+    }
+
+    try {
+      notiSound = new Audio('sounds/' + el.bj + '/' + el.soundUrl)
+    } catch (error) {
+      console.log('notiSound', error)
+    }
+
+    notiSound.load()
+    notiTextToSpeach.load()
+
+    notiSound.onloadedmetadata = function () {
+      soundReady = true
+      checkBothAudiosReady()
+    }
+    notiTextToSpeach.onloadedmetadata = function () {
+      ttsReady = true
+      checkBothAudiosReady()
+    }
+
+    function checkBothAudiosReady() {
+      if (soundReady && ttsReady) {
+        console.log(
+          `both audios are Ready / Sound Dur: ${notiSound.duration} / TTS Dur: ${notiTextToSpeach.duration} / Noti Term :${notiTerm} `
+        )
+
+        var timer =
+          Math.floor(notiSound.duration * 1000) +
+          Math.floor(notiTextToSpeach.duration * 1000) +
+          notiTerm
+        notiPopUpInterval = setTimeout(tick, timer)
+
+        sweetAlert(el, notiSound, notiTextToSpeach, timer)
+      }
+    }
   } else {
+    console.log(`남아 있는 알림 없음`)
     notiPopUpInterval = setTimeout(tick, 1000)
   }
 }
 
-async function sweetAlert(data) {
-  ttsUrl +=
-    ttsUrl +
-    tssDialogGen(data, data.config.script) +
-    '/' +
-    data.config.SPEAKING_RATE +
-    '/' +
-    data.config.SPEAKING_VOICE
-
-  console.log(ttsUrl)
+async function sweetAlert(data, notiSound, notiTextToSpeach, timer) {
   Swal.fire({
     title: alertTextGen(data, data.config.script),
     html:
@@ -49,7 +86,7 @@ async function sweetAlert(data) {
       '<button id="resume" class="btn btn-success" disabled>' +
       'RESUME' +
       '</button><br/>',
-    timer: 10000,
+    timer: timer,
     imageUrl: data.imgUrl,
     imageAlt: 'A image',
     showConfirmButton: false,
@@ -93,11 +130,11 @@ async function sweetAlert(data) {
         Swal.resumeTimer()
       })
 
-      /* notiSound.play()
+      notiSound.play()
       var setTimeoutID = setTimeout(() => {
         notiTextToSpeach.play()
         clearTimeout(setTimeoutID)
-      }, 2000) */
+      }, Math.floor(notiSound.duration * 1000))
     },
     willClose: () => {
       clearInterval(timerInterval)
@@ -113,7 +150,7 @@ function tssDialogGen(data, script) {
   Object.keys(data).forEach(function (key) {
     reqUrl = reqUrl.replace('[' + key + ']', data[key])
   })
-  // reqUrl = reqUrl.replaceAll('[break]', '')
+  reqUrl = reqUrl.replaceAll('[break]', '')
   return encodeURIComponent(reqUrl)
 }
 

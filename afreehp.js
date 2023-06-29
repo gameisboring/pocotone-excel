@@ -8,40 +8,21 @@ var path = require('path')
 
 module.exports = async (server) => {
   const SocketIO = require('socket.io')(server, { path: '/socket.io' })
-  function doSomething(cont) {
-    console.log(cont)
-  }
   //////////////////////////////////////////////////////////////////
   /// settings, alertbox url
   //////////////////////////////////////////////////////////////////
-  var settings = require('./config/settings.json')
+  var settings = JSON.parse(
+    fs.readFileSync(path.join('config', 'settings.json'))
+  )
   //////////////////////////////////////////////////////////////////
   /// afreehp
   //////////////////////////////////////////////////////////////////
   console.log('==============================================')
   console.log('Initialize afreehp')
-  try {
-    var response = await requestPromise(settings.afreehp.alertbox_url)
-    if (response.statusCode == 200) {
-      var matched_res = response.body.match(/idx:\s*"([a-zA-Z0-9]+)",/)
-      if (matched_res !== null && matched_res.length > 1) {
-        settings.afreehp.idx = matched_res[1]
-        console.log(`Get afreehp.idx succeed : ${settings.afreehp.idx}\n`)
-      } else {
-        console.error('Get afreehp.idx parse failed.\n')
-      }
-    } else {
-      console.error('Get afreehp.idx failed.\n')
-    }
-  } catch (e) {
-    console.error('Error afreehp.idx parse: ' + e.toString())
-  }
 
   function connect_afreehp() {
-    if (settings.afreehp.idx === undefined) {
-      console.log('can not find afreehp idx')
-      return
-    }
+    settings = JSON.parse(fs.readFileSync(path.join('config', 'settings.json')))
+    checkAfreeHpIdx(settings)
 
     const url_ws_afreehp = 'http://afreehp.kr:13536'
     const socketAfreehp = io(url_ws_afreehp, {
@@ -83,10 +64,11 @@ module.exports = async (server) => {
           var type = data.data.type
           var id = data.data.id
           var name = data.data.name
-          var { keyword, plusMinus, imgUrl } = getImgUrlFromMsg(
+          var { keyword, plusMinus, imgUrl, BJ } = getImgUrlFromMsg(
             config,
             data.data
           )
+          var soundUrl = getSoundSrc(config.BJSOUND, data.data.value, BJ)
           switch (data.data.broad) {
             case 'afreeca':
               if (type == 'star') {
@@ -110,8 +92,18 @@ module.exports = async (server) => {
             plusMinus: plusMinus,
             imgUrl: imgUrl,
             config: config,
+            bj: BJ,
+            soundUrl: soundUrl,
           }
-
+          console.log(
+            `New Donation | ID:${id}, 이름:${name}, 개수:${val}, 메세지:${
+              data.data.msg
+            }, 후원BJ:${BJ ? BJ : '없음'}, 점수변동:${
+              plusMinus ? plusMinus : '없음'
+            }, 키워드:${
+              keyword ? keyword : '없음'
+            }, IMG:${imgUrl}, SOUND:${soundUrl}`
+          )
           SocketIO.emit('news', notiData)
         }
       } catch (e) {
@@ -131,22 +123,38 @@ module.exports = async (server) => {
       console.error(err)
     })
 
-    SocketIO.on('connection', (socket) => {
-      socket.on('stop', (msg) => {
-        console.log(msg)
-        SocketIO.emit('stop', 'stop button click')
-      })
-
-      socket.on('resume', (msg) => {
-        console.log(msg)
-        SocketIO.emit('resume', 'resume button click')
-      })
-    })
-
     setTimeout(function () {
       socketAfreehp.connect()
     }, 1000)
   }
+
+  SocketIO.on('connection', (socket) => {
+    socket.emit('afreecaHpUrl', settings.afreehp.alertbox_url)
+
+    socket.on('stop', (msg) => {
+      console.log(msg)
+      SocketIO.emit('stop', 'stop button click')
+    })
+
+    socket.on('resume', (msg) => {
+      console.log(msg)
+      SocketIO.emit('resume', 'resume button click')
+    })
+
+    socket.on('restart', (msg) => {
+      console.log('restart server : afreeca helper url : ', msg)
+      settings.afreehp.alertbox_url = msg
+      delete settings.afreehp.idx
+      fs.writeFileSync(
+        path.join('config', 'settings.json'),
+        JSON.stringify(settings)
+      )
+
+      socket.emit('afreecaHpUrl', settings.afreehp.alertbox_url)
+
+      connect_afreehp()
+    })
+  })
 
   function getImgUrlFromMsg(notiConfig, data) {
     let BJID = Object.keys(notiConfig.BJID)
@@ -155,23 +163,29 @@ module.exports = async (server) => {
 
     let keyword = ''
     let plusMinus = ''
+    let BJ = ''
     let imgUrl = notiConfig.BJIMG.default
 
     for (i in BJID) {
       // bJID[0] == 'ori'
       Object.keys(notiConfig.BJID[BJID[i]]).forEach((plma) => {
-        notiConfig.BJID[BJID[i]][plma].forEach((keyword) => {
-          var searchResult = String(data.msg).search(keyword)
+        notiConfig.BJID[BJID[i]][plma].forEach((_keyword) => {
+          var searchResult = String(data.msg).search(_keyword)
+          // if
           if (searchResult != -1) {
-            filteredWord.push([keyword, plma, searchResult])
-            filteredBjImgUrl.push([notiConfig.BJIMG[BJID[i]], searchResult])
+            filteredWord.push([_keyword, plma, searchResult])
+            filteredBjImgUrl.push([
+              notiConfig.BJIMG[BJID[i]],
+              BJID[i],
+              searchResult,
+            ])
           }
         })
       })
     }
 
     if (filteredWord.length == 0 || filteredBjImgUrl.length == 0) {
-      return { keyword, plusMinus, imgUrl }
+      return { keyword, plusMinus, imgUrl, BJ }
     } else {
       filteredWord.sort(function (a, b) {
         if (a[2] > b[2]) return -1
@@ -180,16 +194,58 @@ module.exports = async (server) => {
       })
 
       filteredBjImgUrl.sort(function (a, b) {
-        if (a[1] > b[1]) return -1
-        if (a[1] < b[1]) return 1
+        if (a[2] > b[2]) return -1
+        if (a[2] < b[2]) return 1
         return 0
       })
 
       keyword = filteredWord[0][0]
       plusMinus = filteredWord[0][1]
       imgUrl = filteredBjImgUrl[0][0]
+      BJ = filteredBjImgUrl[0][1]
 
-      return { keyword, plusMinus, imgUrl }
+      return { keyword, plusMinus, imgUrl, BJ }
+    }
+  }
+
+  function getSoundSrc(soundConfig, value, BJ) {
+    if (BJ == '') {
+      return soundConfig.default
+    } else {
+      if (value <= Number(soundConfig[BJ].FIRST_SOUND_DOWN)) {
+        return soundConfig[BJ].FIRST_SOUND_FILE
+      } else if (
+        value >= Number(soundConfig[BJ].SECOND_SOUND_UP) &&
+        value <= Number(soundConfig[BJ].SECOND_SOUND_DOWN)
+      ) {
+        return soundConfig[BJ].SECOND_SOUND_FILE
+      } else if (value >= Number(soundConfig[BJ].THIRD_SOUND_UP)) {
+        return soundConfig[BJ].THIRD_SOUND_FILE
+      }
+    }
+  }
+
+  async function checkAfreeHpIdx(settings) {
+    try {
+      var response = await requestPromise(settings.afreehp.alertbox_url)
+      if (response.statusCode == 200) {
+        var matched_res = response.body.match(/idx:\s*"([a-zA-Z0-9]+)",/)
+        if (matched_res !== null && matched_res.length > 1) {
+          settings.afreehp.idx = matched_res[1]
+          console.log(`Get afreehp.idx succeed : ${settings.afreehp.idx}\n`)
+        } else {
+          console.error('Get afreehp.idx parse failed.\n')
+        }
+      } else {
+        console.error('Get afreehp.idx failed.\n')
+      }
+    } catch (e) {
+      console.error('Error afreehp.idx parse: ' + e.toString())
+    }
+
+    if (settings.afreehp.idx === undefined) {
+      console.log('can not find afreehp idx')
+      return
     }
   }
 

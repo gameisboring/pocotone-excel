@@ -5,6 +5,7 @@ const request = require('request')
 const requestPromise = util.promisify(request)
 const fs = require('fs')
 var path = require('path')
+const { dateFormat } = require('./time')
 
 module.exports = async (server) => {
   const SocketIO = require('socket.io')(server, { path: '/socket.io' })
@@ -20,9 +21,12 @@ module.exports = async (server) => {
   console.log('==============================================')
   console.log('Initialize afreehp')
 
-  function connect_afreehp() {
-    settings = JSON.parse(fs.readFileSync(path.join('config', 'settings.json')))
-    checkAfreeHpIdx(settings)
+  async function connect_afreehp() {
+    require('./fileControl').makeListFile()
+
+    settings = await checkAfreeHpIdx(
+      JSON.parse(fs.readFileSync(path.join('config', 'settings.json')))
+    )
 
     const url_ws_afreehp = 'http://afreehp.kr:13536'
     const socketAfreehp = io(url_ws_afreehp, {
@@ -43,7 +47,7 @@ module.exports = async (server) => {
       // socket.send("pagecmd", pagecmd);
     })
 
-    socketAfreehp.on('cmd', function (data) {
+    socketAfreehp.on('cmd', async function (data) {
       var config = ''
 
       if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {
@@ -73,7 +77,13 @@ module.exports = async (server) => {
             case 'afreeca':
               if (type == 'star') {
                 console.log(
-                  `Afreehp - starballoon : ${val} from ${name}(${id})`
+                  `New Donation | ID:${id}, 이름:${name}, 개수:${val}, 메세지:${
+                    data.data.msg
+                  }, 후원BJ:${BJ ? BJ : '없음'}, 점수변동:${
+                    plusMinus ? plusMinus : '없음'
+                  }, 키워드:${
+                    keyword ? keyword : '없음'
+                  }, IMG:${imgUrl}, SOUND:${soundUrl}`
                 )
               } else if (type == 'adballoon') {
                 console.log(`Afreehp - adballoon : ${val} from ${name}(${id})`)
@@ -83,6 +93,7 @@ module.exports = async (server) => {
           }
 
           notiData = {
+            createAt: dateFormat(new Date()),
             type: type,
             id: id,
             name: name,
@@ -91,19 +102,13 @@ module.exports = async (server) => {
             keyword: keyword,
             plusMinus: plusMinus,
             imgUrl: imgUrl,
-            config: config,
             bj: BJ,
             soundUrl: soundUrl,
           }
-          console.log(
-            `New Donation | ID:${id}, 이름:${name}, 개수:${val}, 메세지:${
-              data.data.msg
-            }, 후원BJ:${BJ ? BJ : '없음'}, 점수변동:${
-              plusMinus ? plusMinus : '없음'
-            }, 키워드:${
-              keyword ? keyword : '없음'
-            }, IMG:${imgUrl}, SOUND:${soundUrl}`
-          )
+          inputDonationData(notiData)
+
+          notiData.config = config
+
           SocketIO.emit('news', notiData)
         }
       } catch (e) {
@@ -247,6 +252,38 @@ module.exports = async (server) => {
       console.log('can not find afreehp idx')
       return
     }
+
+    return settings
+  }
+
+  async function inputDonationData(notiData) {
+    // 기존에 작성되어있는 Array 타입 JSON 파일
+    let orderedList = JSON.parse(
+      fs.readFileSync(
+        path.join('list', `${getNewestList('_list.json')}`),
+        'utf-8'
+      )
+    )
+    notiData.number = orderedList.length + 1
+    orderedList.push(notiData)
+
+    fs.writeFileSync(
+      path.join('list', `${getNewestList('_list.json')}`),
+      JSON.stringify(orderedList)
+    )
+  }
+
+  function getNewestList(keyWord) {
+    let files = fs.readdirSync(path.join('list'), 'utf-8')
+    files = files
+      .filter((file) => file.includes(keyWord))
+      .map((file) => ({
+        file,
+        mtime: fs.lstatSync(path.join('list', file)).mtime,
+      }))
+      .sort((a, b) => b.mtime.getTime() - a.mtime.getTime())
+
+    return files[0].file
   }
 
   connect_afreehp()

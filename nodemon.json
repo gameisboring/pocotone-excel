@@ -1,5 +1,4 @@
 {
-  "nodemonConfig": {
-    "ignore": ["./public/*", "./config/*"]
-  }
+  "ignore": ["list/", "public/"],
+  "watch": ["afreehp", "app", "/bin/www"]
 }

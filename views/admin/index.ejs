@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -14,13 +13,13 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
-    <!-- Bootstrap CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="stylesheets/bootstrap.css" />
 
     <title><%= title %></title>
   </head>
-  <body>
-    <nav class="navbar navbar-expand-lg bg-primary px-4" data-bs-theme="dark">
+  <body class="vw-100 vh-100">
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
       <a class="navbar-brand" href="/admin">Navbar</a>
       <button
         class="navbar-toggler"
@@ -61,42 +60,162 @@
         </div>
       </div>
     </nav>
-    <div class="row text-center">
-      <div class="col-12 col-lg-4 bg-info">
-        <form>
+    <div class="row mx-0">
+      <div class="col-12 col-lg-4 bg-secondary p-0">
+        <form class="mt-4">
           <fieldset>
-            <legend>Legend</legend>
+            <legend>알림 스크립트 변경</legend>
             <div class="form-group">
-              <label for="exampleInputEmail1" class="form-label mt-4"
-                >Email address</label
-              >
               <input
-                type="email"
+                type="text"
                 class="form-control"
-                id="exampleInputEmail1"
-                aria-describedby="emailHelp"
-                placeholder="Enter email"
+                id="notiScriptInput"
+                placeholder="스크립트 입력"
               />
-              <small id="emailHelp" class="form-text text-muted"
-                >We'll never share your email with anyone else.</small
+
+              <small>원하는 대로 스크립트 조합하여 사용하세요</small>
+              <br /><br />
+              <span
+                >ex) [name] 님. [break]별풍선 [value]개 감사합니다.
+                [break][msg]</span
               >
-            </div>
-            <div class="form-group">
-              <label for="exampleInputPassword1" class="form-label mt-4"
-                >Password</label
-              >
-              <input
-                type="password"
-                class="form-control"
-                id="exampleInputPassword1"
-                placeholder="Password"
-              />
+              <br />
+              <strong>옵션 목록</strong>
+              <br /><br />
+              <span
+                >[name] 후원자 이름 | [id] 후원자 ID | [msg] 후원 메세지</span
+              ><br />
+              <span>
+                [bj] 후원BJ이름 | [value] 별풍선 개수 | [break] 오버레이 텍스트
+                줄바꿈
+              </span>
             </div>
           </fieldset>
         </form>
+        <form class="mt-4">
+          <fieldset>
+            <legend>ㅈㅈㅈㅈ</legend>
+            <div class="form-group"></div>
+          </fieldset>
+        </form>
       </div>
-      <div class="col-12 col-lg-4 bg-success">.g-col-6 .g-col-md-4</div>
-      <div class="col-12 col-lg-4 bg-secondary">.g-col-6 .g-col-md-4</div>
+      <div class="col-12 col-lg-4 bg-success p-0">TODO Second</div>
+      <div class="col-12 col-lg-4 bg-secondary p-0">
+        <form class="mt-4">
+          <legend>현재 키워드</legend>
+          <div id="keywordNow">
+            <div class="ori">
+              <strong>오리꿍</strong>
+              <div class="plus d-flex gap-3 mb-2">플러스</div>
+              <div class="minus d-flex gap-3">마이너스</div>
+            </div>
+            <div class="hiyoko">
+              <strong>히요코</strong>
+              <div class="plus d-flex gap-3 mb-2">플러스</div>
+              <div class="minus d-flex gap-3">마이너스</div>
+            </div>
+
+            <div class="yam">
+              <strong>얌</strong>
+              <div class="plus d-flex gap-3 mb-2">플러스</div>
+              <div class="minus d-flex gap-3">마이너스</div>
+            </div>
+            <div class="dal">
+              <strong>달체솜</strong>
+              <div class="plus d-flex gap-3 mb-2">플러스</div>
+              <div class="minus d-flex gap-3">마이너스</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <legend>키워드 등록</legend>
+            <div>
+              <span>BJ</span>
+              <div class="btn-group" role="group">
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="selBJ"
+                  value="ori"
+                  id="bj-sel-ori"
+                />
+                <label class="btn btn-outline-primary" for="bj-sel-ori"
+                  >오리꿍</label
+                >
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="selBJ"
+                  value="hiyoko"
+                  id="bj-sel-hiyoko"
+                />
+                <label class="btn btn-outline-primary" for="bj-sel-hiyoko"
+                  >히요코</label
+                >
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="selBJ"
+                  value="yam"
+                  id="bj-sel-yam"
+                />
+                <label class="btn btn-outline-primary" for="bj-sel-yam"
+                  >얌</label
+                >
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="selBJ"
+                  value="dal"
+                  id="bj-sel-dal"
+                />
+                <label class="btn btn-outline-primary" for="bj-sel-dal"
+                  >달체솜</label
+                >
+              </div>
+              <div>
+                <span>점수</span>
+                <div class="btn-group" role="group">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="plusMinus"
+                    value="plus"
+                    id="plusMinus-plus"
+                  />
+                  <label class="btn btn-outline-primary" for="plusMinus-plus"
+                    >플러스</label
+                  >
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="plusMinus"
+                    value="minus"
+                    id="plusMinus-minus"
+                  />
+                  <label class="btn btn-outline-primary" for="plusMinus-minus"
+                    >마이너스</label
+                  >
+                </div>
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <span>키워드</span
+                    ><input
+                      id="keyWordInput"
+                      class=""
+                      type="text"
+                      value=""
+                      placeholder=""
+                    />
+                  </div>
+                  <button id="keyWordSaveBtn" class="btn btn-primary">
+                    키워드 등록
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   </body>
   <!-- Optional JavaScript -->
@@ -106,28 +225,8 @@
       path: '/socket.io',
       transports: ['websocket'],
     })
-
-    socket.on('afreecaHpUrl', (msg) => {
-      document.querySelector('#afreecaHpUrl').innerText = msg
-    })
-
-    document.querySelector('#urlSettingBtn').addEventListener('click', (e) => {
-      e.preventDefault()
-      console.log('restart button clicked')
-      socket.emit('restart', document.querySelector('#urlSettingInput').value)
-    })
-
-    /* document.querySelector('#stopBtn').addEventListener('click', (e) => {
-      e.preventDefault()
-      console.log('stop button clicked')
-      socket.emit('stop', 'stop')
-    })
-    document.querySelector('#resumeBtn').addEventListener('click', (e) => {
-      e.preventDefault()
-      console.log('resume button clicked')
-      socket.emit('resume', 'resume')
-    }) */
   </script>
+  <script src="/javascripts/admin.js"></script>
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script
     src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

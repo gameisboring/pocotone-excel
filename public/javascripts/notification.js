@@ -20,6 +20,7 @@ async function tick() {
   if (list.length > 0) {
     console.log(`현재 남은 알림 수 : ${list.length} 개`)
     const el = list.shift()
+    console.log(el)
     ttsUrl +=
       tssDialogGen(el, el.config.script) +
       '/' +

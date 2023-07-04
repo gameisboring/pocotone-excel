@@ -1,44 +1,44 @@
-document.addEventListener('DOMContentLoaded', async function () {
-  renderNowKeyWord()
-  renderConditions()
-})
-socket.on('afreecaHpUrl', async (msg) => {
-  document.querySelector('#afreecaHpUrl').innerText = msg
-})
+document.addEventListener("DOMContentLoaded", async function () {
+  renderNowKeyWord();
+  renderConditions();
+});
+socket.on("afreecaHpUrl", async (msg) => {
+  document.querySelector("#afreecaHpUrl").innerText = msg;
+});
 
-document.querySelector('#urlSettingBtn').addEventListener('click', (e) => {
-  e.preventDefault()
-  console.log('restart button clicked')
-  socket.emit('restart', document.querySelector('#urlSettingInput').value)
-})
+document.querySelector("#urlSettingBtn").addEventListener("click", (e) => {
+  e.preventDefault();
+  console.log("restart button clicked");
+  socket.emit("restart", document.querySelector("#urlSettingInput").value);
+});
 
 document
-  .querySelector('#conditionConfigSaveBtn')
-  .addEventListener('click', (e) => {
-    e.preventDefault()
-    var sendObj = {}
-    const inputs = document.querySelectorAll('#condition input')
+  .querySelector("#conditionConfigSaveBtn")
+  .addEventListener("click", (e) => {
+    e.preventDefault();
+    var sendObj = {};
+    const inputs = document.querySelectorAll("#condition input");
     inputs.forEach((input) => {
-      if (input.getAttribute('type') == 'number') {
-        console.log('this is number', input.value)
-      } else if (input.getAttribute('type') == 'file') {
-        console.log('this is file', input.value)
+      if (input.getAttribute("type") == "number") {
+        console.log("this is number", input.value);
+      } else if (input.getAttribute("type") == "file") {
+        console.log("this is file", input.value);
       }
-    })
-  })
+    });
+  });
 
 document
-  .querySelector('#keyWordSaveBtn')
-  .addEventListener('click', async (e) => {
-    e.preventDefault()
-    var bj = $('input:radio[name=selBJ]:checked').val()
-    var plusMinus = $('input:radio[name=plusMinus]:checked').val()
-    var keyWord = $('#keyWordInput').val()
+  .querySelector("#keyWordSaveBtn")
+  .addEventListener("click", async (e) => {
+    e.preventDefault();
+    var bj = $("input:radio[name=selBJ]:checked").val();
+    var plusMinus = $("input:radio[name=plusMinus]:checked").val();
+    var keyWord = $("#keyWordInput").val();
 
-    fetch('notification/setting', {
-      method: 'POST',
+    fetch("notification/setting", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         bj: bj,
@@ -49,30 +49,30 @@ document
       .then((response) => response.json())
       .then((response) => {
         if (response.ok) {
-          alert('성공적으로 저장되었습니다')
-          renderNowKeyWord()
+          alert("성공적으로 저장되었습니다");
+          renderNowKeyWord();
         } else {
-          alert('저장에 실패했습니다')
+          alert("저장에 실패했습니다");
         }
-      })
+      });
 
-    $('input:radio[name=selBJ]').prop('checked', false)
-    $('input:radio[name=plusMinus]').prop('checked', false)
-    $('#keyWordInput').val('')
-  })
+    $("input:radio[name=selBJ]").prop("checked", false);
+    $("input:radio[name=plusMinus]").prop("checked", false);
+    $("#keyWordInput").val("");
+  });
 
 function deleteBtnClick(event) {
-  event.preventDefault()
+  event.preventDefault();
   var data = {
-    keyWord: event.target.getAttribute('data-word'),
-    bj: event.target.getAttribute('data-bj'),
-    plusMinus: event.target.getAttribute('data-plusMinus'),
-  }
-  if (confirm('삭제하시겠습니까?')) {
-    fetch('notification/setting', {
-      method: 'DELETE',
+    keyWord: event.target.getAttribute("data-word"),
+    bj: event.target.getAttribute("data-bj"),
+    plusMinus: event.target.getAttribute("data-plusMinus"),
+  };
+  if (confirm("삭제하시겠습니까?")) {
+    fetch("notification/setting", {
+      method: "DELETE",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         data,
@@ -81,15 +81,15 @@ function deleteBtnClick(event) {
       .then((response) => response.json())
       .then((response) => {
         if (response.ok) {
-          alert('성공적으로 저장되었습니다')
-          renderNowKeyWord()
+          alert("성공적으로 저장되었습니다");
+          renderNowKeyWord();
         } else {
-          alert('저장에 실패했습니다')
+          alert("저장에 실패했습니다");
         }
-      })
+      });
   } else {
   }
-  console.log(data)
+  console.log(data);
 }
 
 /* document.querySelector('#stopBtn').addEventListener('click', (e) => {
@@ -106,48 +106,48 @@ document.querySelector('#resumeBtn').addEventListener('click', (e) => {
 }) */
 
 async function renderNowKeyWord() {
-  await fetch('/notification/setting')
+  await fetch("/notification/setting")
     .then((response) => response.json())
     .then(async (data) => {
-      var BJs = Object.keys(data.BJID)
+      var BJs = Object.keys(data.BJID);
       for (i in BJs) {
-        renderKeyWord('plus', data.BJID[BJs[i]].plus, BJs[i])
-        renderKeyWord('minus', data.BJID[BJs[i]].minus, BJs[i])
+        renderKeyWord("plus", data.BJID[BJs[i]].plus, BJs[i]);
+        renderKeyWord("minus", data.BJID[BJs[i]].minus, BJs[i]);
       }
-      document.querySelector('#keywordPresent')
-    })
+      document.querySelector("#keywordPresent");
+    });
 }
 
 async function renderConditions() {
-  await fetch('/notification/setting')
+  await fetch("/notification/setting")
     .then((response) => response.json())
     .then(async (data) => {
       Object.keys(data.BJSOUND).forEach((bj) => {
-        if (typeof data.BJSOUND[bj] == 'object') {
-          console.log(bj)
+        if (typeof data.BJSOUND[bj] == "object") {
+          console.log(bj);
           Object.keys(data.BJSOUND[bj]).forEach((num) => {
-            renderConditionBar(data.BJSOUND[bj][num], bj, num)
-          })
-          const addCondition = document.createElement('button')
-          addCondition.innerText = '조건 추가'
-          addCondition.setAttribute('data-bj', bj)
-          addCondition.addEventListener('click', (e) => {
-            e.preventDefault()
-            const bj = e.target.getAttribute('data-bj')
-            console.log(bj)
-          })
-          document.querySelector(`#${bj}-conditions`).appendChild(addCondition)
+            renderConditionBar(data.BJSOUND[bj][num], bj, num);
+          });
+          const addCondition = document.createElement("button");
+          addCondition.innerText = "조건 추가";
+          addCondition.setAttribute("data-bj", bj);
+          addCondition.addEventListener("click", (e) => {
+            e.preventDefault();
+            const bj = e.target.getAttribute("data-bj");
+            console.log(bj);
+          });
+          document.querySelector(`#${bj}-conditions`).appendChild(addCondition);
         }
-      })
-    })
+      });
+    });
 }
 
 function renderConditionBar(data, bj, num) {
-  let bjDiv = document.getElementById(bj + '-conditions')
+  let bjDiv = document.getElementById(bj + "-conditions");
 
-  const conditionBar = document.createElement('div')
+  const conditionBar = document.createElement("div");
 
-  conditionBar.classList.add('d-flex', 'justify-content-between')
+  conditionBar.classList.add("d-flex", "justify-content-between");
 
   var html = `<div>
                 <input
@@ -171,38 +171,56 @@ function renderConditionBar(data, bj, num) {
                 <label class="btn btn-primary rounded" for="${bj}-${num}-sound">
                   파일 변경
                 </label>
-              </div>`
+              </div>`;
 
-  const fileInput = document.createElement('input')
-  fileInput.setAttribute('type', 'file')
-  fileInput.setAttribute('id', `${bj}-${num}-sound`)
-  fileInput.classList.add('d-none')
-  fileInput.addEventListener('change', (e) => {
-    e.preventDefault()
-    const fileNameSpan = `#${e.target.id}-filename`
-    const files = e.target.value.split('\\')
-    document.querySelector(fileNameSpan).innerText = files[files.length - 1]
-  })
+  const fileInput = document.createElement("input");
+  fileInput.setAttribute("type", "file");
+  fileInput.setAttribute("id", `${bj}-${num}-sound`);
+  fileInput.classList.add("d-none");
+  fileInput.addEventListener("change", (e) => {
+    e.preventDefault();
+    fileUpload(e.target, bj, num);
+  });
 
-  conditionBar.innerHTML = html
-  conditionBar.appendChild(fileInput)
+  conditionBar.innerHTML = html;
+  conditionBar.appendChild(fileInput);
 
-  bjDiv.appendChild(conditionBar)
+  bjDiv.appendChild(conditionBar);
 }
 
 function renderKeyWord(mode, arr, BJ) {
-  var querySel = `#keywordPresent .${BJ} .${mode}`
+  var querySel = `#keywordPresent .${BJ} .${mode}`;
   document.querySelector(querySel).innerHTML =
-    mode == 'plus' ? '플러스' : '마이너스'
+    mode == "plus" ? "플러스" : "마이너스";
   arr.forEach((element) => {
-    var newBtn = document.createElement('Button')
-    newBtn.innerText = element
-    newBtn.classList.add('btn', 'btn-primary', 'delete', 'rounded')
-    newBtn.setAttribute('data-word', element)
-    newBtn.setAttribute('data-bj', BJ)
-    newBtn.setAttribute('data-plusMinus', mode)
-    newBtn.addEventListener('click', deleteBtnClick)
+    var newBtn = document.createElement("Button");
+    newBtn.innerText = element;
+    newBtn.classList.add("btn", "btn-primary", "delete", "rounded");
+    newBtn.setAttribute("data-word", element);
+    newBtn.setAttribute("data-bj", BJ);
+    newBtn.setAttribute("data-plusMinus", mode);
+    newBtn.addEventListener("click", deleteBtnClick);
 
-    document.querySelector(querySel).appendChild(newBtn)
+    document.querySelector(querySel).appendChild(newBtn);
+  });
+}
+
+async function fileUpload(target, bj, num) {
+  console.log(target.files[0]);
+  let formData = new FormData();
+  formData.append("bj", bj);
+  formData.append("num", num);
+  formData.append("file", target.files[0]);
+
+  // 파일 음악파일 만 필터링
+  // 기존 파일 삭제 여부
+  await fetch("admin/setting/sound", {
+    method: "POST",
+    body: formData,
   })
+    .then((response) => response.json())
+    .then((response) => {
+      const fileNameSpan = `#${bj}-${num}-sound-filename`;
+      document.querySelector(fileNameSpan).innerText = response.originalname;
+    });
 }

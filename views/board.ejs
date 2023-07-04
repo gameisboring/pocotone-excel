@@ -6,12 +6,25 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <title><%= title %></title>
+    <link rel="stylesheet" href="stylesheets/board.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
-    Express Main
+    <div id="main">
+      <div id="header">
+        <img src="images/bj/header.png" alt="" width="100%" />
+      </div>
+
+      <div class="bar">
+        <img src="images/bj/listbar_black.png" alt="" />
+        <div class="barText menu white top"></div>
+      </div>
+      <div class="body"></div>
+      <div class="footer">
+        <img src="images/bj/footer.png" alt="" width="100%" />
+      </div>
+    </div>
   </body>
-  <!-- 익스프레스 서버와 소켓 서버가 연결이 되면, 소켓IO 서버에서 js파일을 넣어준다 -->
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io.connect('http://localhost:<%= port %>', {

@@ -4,11 +4,23 @@ let timerInterval = null
 let list = new Array()
 var notiPopUpInterval = null
 var notiTerm = 2000
-
+var timer = 0
+var leftTimer = 0
 socket.on('news', async function (data) {
   // await sweetAlert(data)
   list.push(data)
 })
+
+/* socket.on('stop', function (data) {
+  leftTimer = Swal.getTimerLeft()
+  clearTimeout(notiPopUpInterval)
+  Swal.stopTimer()
+})
+
+socket.on('resume', function (data) {
+  notiPopUpInterval = setTimeout(tick, leftTimer)
+  Swal.resumeTimer()
+}) */
 notiPopUpInterval = setTimeout(tick, 1000)
 socket.on('connect', function (reason) {})
 
@@ -38,7 +50,7 @@ async function tick() {
     }
 
     try {
-      notiSound = new Audio('sounds/' + el.bj + '/' + el.soundUrl)
+      notiSound = new Audio('sounds/' + el.soundUrl)
     } catch (error) {
       console.log('notiSound', error)
     }
@@ -61,7 +73,7 @@ async function tick() {
           `both audios are Ready / Sound Dur: ${notiSound.duration} / TTS Dur: ${notiTextToSpeach.duration} / Noti Term :${notiTerm} `
         )
 
-        var timer =
+        timer =
           Math.floor(notiSound.duration * 1000) +
           Math.floor(notiTextToSpeach.duration * 1000) +
           notiTerm
@@ -95,41 +107,12 @@ async function sweetAlert(data, notiSound, notiTextToSpeach, timer) {
     didOpen: async () => {
       const content = Swal.getHtmlContainer()
       const $ = content.querySelector.bind(content)
-      const stop = $('#stop')
-      const resume = $('#resume')
-
-      function toggleButtons() {
-        stop.disabled = !Swal.isTimerRunning()
-        resume.disabled = Swal.isTimerRunning()
-      }
-
-      stop.addEventListener('click', () => {
-        Swal.stopTimer()
-        toggleButtons()
-      })
-
-      resume.addEventListener('click', () => {
-        Swal.resumeTimer()
-        toggleButtons()
-      })
 
       timerInterval = setInterval(() => {
         Swal.getHtmlContainer().querySelector('strong').textContent = (
           Swal.getTimerLeft() / 1000
         ).toFixed(0)
       }, 100)
-
-      socket.on('stop', function (data) {
-        console.log(data)
-        // document.querySelector('#stop').click()
-        Swal.stopTimer()
-      })
-
-      socket.on('resume', function (data) {
-        console.log(data)
-        // document.querySelector('#resume').click()
-        Swal.resumeTimer()
-      })
 
       notiSound.play()
       var setTimeoutID = setTimeout(() => {

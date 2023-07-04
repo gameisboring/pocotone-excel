@@ -1,0 +1,12 @@
+#condition input[type='number'] {
+  width: 70px;
+  font-size: 12px;
+}
+
+.input-file-button {
+  padding: 6px 25px;
+  background-color: #593196;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}

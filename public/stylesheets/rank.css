@@ -1,0 +1,194 @@
+@font-face {
+  font-family: 'ChosunLo';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunLo.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NanumSquareNeo-Heavy';
+  src: url('../font/NanumSquareNeoTTF-eHv.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'NanumSquareNeo-Bold';
+  src: url('../font/NanumSquareNeoTTF-cBd.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+body {
+  margin-left: 100px;
+  margin-right: 0px;
+  margin-top: 75px;
+  margin-bottom: 0px;
+
+  background-color: transparent;
+  padding: auto;
+  display: inline;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+  height: auto;
+  filter: none;
+  border: 0;
+  border-radius: 0;
+}
+
+#main {
+  width: 400px;
+  height: auto;
+  position: absolute;
+  /* top:0; */
+  bottom: 0;
+  left: 0;
+  /* right: 0; */
+  margin: auto;
+  padding: auto;
+  display: inline;
+
+  background-color: transparent;
+}
+
+.bar {
+  /* margin-left: 1px; */
+  background-image: url('../images/donation/barBack.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-weight: 700;
+  height: 30px;
+  /* padding-left: 10px;
+    padding-right: 10px; */
+  display: flex;
+  flex-direction: column;
+}
+
+.bar img {
+  height: 30px;
+  width: 100%;
+  display: block;
+  padding: 0;
+  filter: none;
+  border: 0;
+  border-radius: 0;
+}
+
+.bar .barText {
+  padding: 0 0 0 18px;
+  position: relative;
+  display: block;
+
+  bottom: 31px;
+  font-size: 16px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 30px;
+}
+
+#main .body {
+  width: 100%;
+}
+
+.bar .barText.top span {
+  font-size: 16px !important;
+}
+
+.white {
+  color: white;
+}
+
+.black {
+  color: black;
+}
+
+.bar .barText.menu {
+  display: flex;
+  bottom: 27px;
+  padding: 0;
+  text-align: center;
+  align-content: center;
+  line-height: 26px;
+}
+
+.bar .barText.menu span {
+  flex-basis: 0;
+}
+
+.bar .barText .rank {
+  flex-grow: 0.5;
+  font-family: 'ChosunLo';
+  font-size: 25px;
+}
+
+.bar .barText .donator {
+  flex-grow: 2.5;
+  font-family: 'NanumSquareNeo-Heavy';
+  font-weight: 900;
+}
+
+.bar .barText .score {
+  flex-grow: 1;
+  font-family: 'NanumSquareNeo-Heavy';
+  font-weight: 900;
+}
+
+.bar .barText .contribute {
+  flex-grow: 1.8;
+  font-family: 'NanumSquareNeo-Bold';
+  font-weight: 800;
+}
+
+.footer {
+  height: auto;
+  width: auto;
+  display: block;
+}
+
+.footer .barText.footer {
+  position: relative;
+  display: flex;
+  bottom: 85px;
+  height: 85px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer .barText.footer span {
+  font-weight: 500;
+  font-style: normal;
+  color: black;
+  font-family: 'ChosunLo';
+  font-size: 25px;
+}
+
+.footer .barText.footer .each {
+  /* position: relative; */
+  /* left: 40px; */
+  font-size: 20px;
+  float: right;
+}
+
+.footer .barText.footer .total {
+  width: 180px;
+  border: 2px solid black;
+  height: 35px;
+  line-height: 36px;
+  /* display: flex;
+      justify-content: center; */
+  font-stretch: 90%;
+  margin: 0;
+  min-width: 100px;
+  text-align: center;
+  padding: 0 3px;
+}
+
+#totalCount {
+  font-size: 38px;
+}

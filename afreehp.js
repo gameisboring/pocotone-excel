@@ -6,6 +6,7 @@ const requestPromise = util.promisify(request)
 const fs = require('fs')
 var path = require('path')
 const { dateFormat } = require('./time')
+const { getNewestList } = require('./fileControl')
 
 module.exports = async (server) => {
   const SocketIO = require('socket.io')(server, { path: '/socket.io' })
@@ -72,44 +73,37 @@ module.exports = async (server) => {
             config,
             data.data
           )
-          var soundUrl = getSoundSrc(config.BJSOUND, data.data.value, BJ)
-          switch (data.data.broad) {
-            case 'afreeca':
-              if (type == 'star') {
-                console.log(
-                  `New Donation | ID:${id}, 이름:${name}, 개수:${val}, 메세지:${
-                    data.data.msg
-                  }, 후원BJ:${BJ ? BJ : '없음'}, 점수변동:${
-                    plusMinus ? plusMinus : '없음'
-                  }, 키워드:${
-                    keyword ? keyword : '없음'
-                  }, IMG:${imgUrl}, SOUND:${soundUrl}`
-                )
-              } else if (type == 'adballoon') {
-                console.log(`Afreehp - adballoon : ${val} from ${name}(${id})`)
-              }
-            default:
-              break
+          var soundUrl = await getSoundSrc(config.BJSOUND, data.data.value, BJ)
+          if (data.data.broad == 'afreeca' && type == 'star') {
+            console.log(
+              `New Donation | 타입: ${type}, 시청자 ID:${id}, 시청자 이름:${name}, 개수:${val}, 메세지:${
+                data.data.msg
+              }, 후원 BJ:${BJ ? BJ : '없음'}, 점수변동:${
+                plusMinus ? plusMinus : '없음'
+              }, 키워드:${
+                keyword ? keyword : '없음'
+              }, IMG:${imgUrl}, SOUND:${soundUrl}`
+            )
+            notiData = {
+              isTest: data.type == 'testmsg' ? true : false,
+              createAt: dateFormat(new Date()),
+              type: type,
+              id: id,
+              name: name,
+              value: val,
+              msg: data.data.msg,
+              keyword: keyword,
+              plusMinus: plusMinus,
+              imgUrl: imgUrl,
+              bj: BJ,
+              soundUrl: soundUrl,
+            }
+            inputListDonationData(notiData)
+
+            notiData.config = config
+
+            SocketIO.emit('news', notiData)
           }
-
-          notiData = {
-            createAt: dateFormat(new Date()),
-            type: type,
-            id: id,
-            name: name,
-            value: val,
-            msg: data.data.msg,
-            keyword: keyword,
-            plusMinus: plusMinus,
-            imgUrl: imgUrl,
-            bj: BJ,
-            soundUrl: soundUrl,
-          }
-          inputDonationData(notiData)
-
-          notiData.config = config
-
-          SocketIO.emit('news', notiData)
         }
       } catch (e) {
         console.error('Afreehp message parse error: ', e.toString())
@@ -213,21 +207,23 @@ module.exports = async (server) => {
     }
   }
 
-  function getSoundSrc(soundConfig, value, BJ) {
+  async function getSoundSrc(soundConfig, value, BJ) {
+    value = Number(value)
+    result = ''
     if (BJ == '') {
       return soundConfig.default
     } else {
-      if (value <= Number(soundConfig[BJ].FIRST_SOUND_DOWN)) {
-        return soundConfig[BJ].FIRST_SOUND_FILE
-      } else if (
-        value >= Number(soundConfig[BJ].SECOND_SOUND_UP) &&
-        value <= Number(soundConfig[BJ].SECOND_SOUND_DOWN)
-      ) {
-        return soundConfig[BJ].SECOND_SOUND_FILE
-      } else if (value >= Number(soundConfig[BJ].THIRD_SOUND_UP)) {
-        return soundConfig[BJ].THIRD_SOUND_FILE
-      }
+      Object.keys(soundConfig[BJ]).forEach((조건번호) => {
+        if (
+          value >= Number(soundConfig[BJ][조건번호].UP) &&
+          value <= Number(soundConfig[BJ][조건번호].DOWN)
+        ) {
+          result = `${BJ}/${soundConfig[BJ][조건번호].FILE}`
+        }
+      })
     }
+
+    return result ? result : soundConfig.default
   }
 
   async function checkAfreeHpIdx(settings) {
@@ -249,14 +245,14 @@ module.exports = async (server) => {
     }
 
     if (settings.afreehp.idx === undefined) {
-      console.log('can not find afreehp idx')
+      console.log('Can not find afreehp idx')
       return
     }
 
     return settings
   }
 
-  async function inputDonationData(notiData) {
+  async function inputListDonationData(notiData) {
     // 기존에 작성되어있는 Array 타입 JSON 파일
     let orderedList = JSON.parse(
       fs.readFileSync(
@@ -271,19 +267,6 @@ module.exports = async (server) => {
       path.join('list', `${getNewestList('_list.json')}`),
       JSON.stringify(orderedList)
     )
-  }
-
-  function getNewestList(keyWord) {
-    let files = fs.readdirSync(path.join('list'), 'utf-8')
-    files = files
-      .filter((file) => file.includes(keyWord))
-      .map((file) => ({
-        file,
-        mtime: fs.lstatSync(path.join('list', file)).mtime,
-      }))
-      .sort((a, b) => b.mtime.getTime() - a.mtime.getTime())
-
-    return files[0].file
   }
 
   connect_afreehp()

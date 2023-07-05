@@ -106,52 +106,43 @@
             </div>
           </fieldset>
         </form> -->
+      </div>
+      <div class="col-12 col-lg-4 bg-success p-0">
         <form class="mt-4">
           <fieldset>
             <legend><strong>알림 조건 설정</strong></legend>
             <div id="condition">
-              <div id="ori-conditions">
+              <div id="ori-conditions" class="d-flex flex-column">
                 <h2>오리꿍</h2>
-                <!-- <div class="d-flex justify-content-between">
-                  <div>
-                    <input
-                      type="number"
-                      data-bj="ori"
-                      data-updown="up"
-                      data-num="1"
-                    /><span>이상</span>
-                    <input
-                      type="number"
-                      data-bj="ori"
-                      data-updown="down"
-                      data-num="1"
-                    /><span>이하</span>
-                  </div>
+              </div>
+              <div id="yam-conditions" class="d-flex flex-column">
+                <h2>얌</h2>
+              </div>
+              <div id="hiyoko-conditions" class="d-flex flex-column">
+                <h2>히요코</h2>
+              </div>
+              <div id="dal-conditions" class="d-flex flex-column">
+                <h2>달체솜</h2>
+              </div>
+              <div id="default-conditions" class="d-flex flex-column">
+                <h2>기본</h2>
+                <div
+                  class="d-flex justify-content-between conditionBar"
+                  data-bj="default"
+                >
                   <div>
                     <span>알림음 : </span>
-                    <span id="ori-1-sound-filename"></span>
-                    <label class="btn btn-primary rounded" for="ori-1-sound">
+                    <span id="default-sound-filename"></span>
+                    <label class="btn btn-primary rounded" for="default-sound">
                       파일 변경
                     </label>
-                    <input
-                      type="file"
-                      name=""
-                      id="ori-1-sound"
-                      style="display: none"
-                    />
                   </div>
-                </div> -->
+                </div>
               </div>
-              <div id="yam-conditions"><h2>얌</h2></div>
-              <div id="hiyoko-conditions"><h2>히요코</h2></div>
-              <div id="dal-conditions"><h2>달체솜</h2></div>
             </div>
             <button type="submit" id="conditionConfigSaveBtn">설정 저장</button>
           </fieldset>
         </form>
-      </div>
-      <div class="col-12 col-lg-4 bg-success p-0">
-        <h1>점수판 설정</h1>
       </div>
       <div class="col-12 col-lg-4 bg-secondary p-0">
         <h1>데이터 수집 설정</h1>

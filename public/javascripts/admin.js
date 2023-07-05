@@ -1,44 +1,83 @@
-document.addEventListener("DOMContentLoaded", async function () {
-  renderNowKeyWord();
-  renderConditions();
-});
-socket.on("afreecaHpUrl", async (msg) => {
-  document.querySelector("#afreecaHpUrl").innerText = msg;
-});
+document.addEventListener('DOMContentLoaded', async function () {
+  renderNowKeyWord()
+  renderConditions()
+})
+socket.on('afreecaHpUrl', async (msg) => {
+  document.querySelector('#afreecaHpUrl').innerText = msg
+})
 
-document.querySelector("#urlSettingBtn").addEventListener("click", (e) => {
-  e.preventDefault();
-  console.log("restart button clicked");
-  socket.emit("restart", document.querySelector("#urlSettingInput").value);
-});
+document.querySelector('#urlSettingBtn').addEventListener('click', (e) => {
+  e.preventDefault()
+  console.log('restart button clicked')
+  socket.emit('restart', document.querySelector('#urlSettingInput').value)
+})
 
 document
-  .querySelector("#conditionConfigSaveBtn")
-  .addEventListener("click", (e) => {
-    e.preventDefault();
-    var sendObj = {};
-    const inputs = document.querySelectorAll("#condition input");
-    inputs.forEach((input) => {
-      if (input.getAttribute("type") == "number") {
-        console.log("this is number", input.value);
-      } else if (input.getAttribute("type") == "file") {
-        console.log("this is file", input.value);
+  .querySelector('#conditionConfigSaveBtn')
+  .addEventListener('click', (e) => {
+    e.preventDefault()
+    var sendObj = { ori: {}, yam: {}, hiyoko: {}, dal: {} }
+    const conditionBars = document.querySelectorAll('#condition .conditionBar')
+
+    conditionBars.forEach((conditionBar) => {
+      const bj = conditionBar.getAttribute('data-bj')
+      if (bj == 'default') {
+        sendObj[bj] = conditionBar.querySelector(
+          `#${bj}-sound-filename`
+        ).innerText
+      } else {
+        const number = conditionBar.getAttribute('data-number')
+          ? conditionBar.getAttribute('data-number')
+          : ''
+        var conditionObj = { UP: '', DOWN: '', FILE: '' }
+        conditionBar.querySelectorAll('input').forEach((input) => {
+          if (input.type == 'number') {
+            console.log(
+              input.getAttribute('data-bj'),
+              input.getAttribute('data-updown')
+            )
+            if (input.getAttribute('data-updown') == 'up') {
+              conditionObj.UP = input.value
+            } else if (input.getAttribute('data-updown') == 'down') {
+              conditionObj.DOWN = input.value
+            }
+          }
+        })
+        conditionObj.FILE = conditionBar.querySelector(
+          `#${bj}-${number}-sound-filename`
+        ).innerText
+
+        sendObj[bj][number] = conditionObj
       }
-    });
-  });
+    })
+
+    fetch('admin/setting', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(sendObj),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response)
+      })
+
+    console.log(sendObj)
+  })
 
 document
-  .querySelector("#keyWordSaveBtn")
-  .addEventListener("click", async (e) => {
-    e.preventDefault();
-    var bj = $("input:radio[name=selBJ]:checked").val();
-    var plusMinus = $("input:radio[name=plusMinus]:checked").val();
-    var keyWord = $("#keyWordInput").val();
+  .querySelector('#keyWordSaveBtn')
+  .addEventListener('click', async (e) => {
+    e.preventDefault()
+    var bj = $('input:radio[name=selBJ]:checked').val()
+    var plusMinus = $('input:radio[name=plusMinus]:checked').val()
+    var keyWord = $('#keyWordInput').val()
 
-    fetch("notification/setting", {
-      method: "POST",
+    fetch('notification/setting', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         bj: bj,
@@ -49,30 +88,30 @@ document
       .then((response) => response.json())
       .then((response) => {
         if (response.ok) {
-          alert("성공적으로 저장되었습니다");
-          renderNowKeyWord();
+          alert('성공적으로 저장되었습니다')
+          renderNowKeyWord()
         } else {
-          alert("저장에 실패했습니다");
+          alert('저장에 실패했습니다')
         }
-      });
+      })
 
-    $("input:radio[name=selBJ]").prop("checked", false);
-    $("input:radio[name=plusMinus]").prop("checked", false);
-    $("#keyWordInput").val("");
-  });
+    $('input:radio[name=selBJ]').prop('checked', false)
+    $('input:radio[name=plusMinus]').prop('checked', false)
+    $('#keyWordInput').val('')
+  })
 
 function deleteBtnClick(event) {
-  event.preventDefault();
+  event.preventDefault()
   var data = {
-    keyWord: event.target.getAttribute("data-word"),
-    bj: event.target.getAttribute("data-bj"),
-    plusMinus: event.target.getAttribute("data-plusMinus"),
-  };
-  if (confirm("삭제하시겠습니까?")) {
-    fetch("notification/setting", {
-      method: "DELETE",
+    keyWord: event.target.getAttribute('data-word'),
+    bj: event.target.getAttribute('data-bj'),
+    plusMinus: event.target.getAttribute('data-plusMinus'),
+  }
+  if (confirm('삭제하시겠습니까?')) {
+    fetch('notification/setting', {
+      method: 'DELETE',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         data,
@@ -81,15 +120,15 @@ function deleteBtnClick(event) {
       .then((response) => response.json())
       .then((response) => {
         if (response.ok) {
-          alert("성공적으로 저장되었습니다");
-          renderNowKeyWord();
+          alert('성공적으로 저장되었습니다')
+          renderNowKeyWord()
         } else {
-          alert("저장에 실패했습니다");
+          alert('저장에 실패했습니다')
         }
-      });
+      })
   } else {
   }
-  console.log(data);
+  console.log(data)
 }
 
 /* document.querySelector('#stopBtn').addEventListener('click', (e) => {
@@ -106,48 +145,105 @@ document.querySelector('#resumeBtn').addEventListener('click', (e) => {
 }) */
 
 async function renderNowKeyWord() {
-  await fetch("/notification/setting")
+  await fetch('/notification/setting')
     .then((response) => response.json())
     .then(async (data) => {
-      var BJs = Object.keys(data.BJID);
+      var BJs = Object.keys(data.BJID)
       for (i in BJs) {
-        renderKeyWord("plus", data.BJID[BJs[i]].plus, BJs[i]);
-        renderKeyWord("minus", data.BJID[BJs[i]].minus, BJs[i]);
+        renderKeyWord('plus', data.BJID[BJs[i]].plus, BJs[i])
+        renderKeyWord('minus', data.BJID[BJs[i]].minus, BJs[i])
       }
-      document.querySelector("#keywordPresent");
-    });
+      document.querySelector('#keywordPresent')
+    })
 }
 
 async function renderConditions() {
-  await fetch("/notification/setting")
+  await fetch('/notification/setting')
     .then((response) => response.json())
     .then(async (data) => {
       Object.keys(data.BJSOUND).forEach((bj) => {
-        if (typeof data.BJSOUND[bj] == "object") {
-          console.log(bj);
+        const buttonEl = document.createElement('button')
+        buttonEl.classList.add(
+          'bg-transparent',
+          'border-0',
+          'mx-auto',
+          'imageBtn',
+          'position-relative'
+        )
+
+        const fileInput = document.createElement('input')
+        fileInput.setAttribute('type', 'file')
+        fileInput.setAttribute('id', `${bj}-image-file`)
+        fileInput.classList.add('d-none')
+        fileInput.addEventListener('change', (e) => {
+          e.preventDefault()
+          imageFileUpload(e.target, bj)
+        })
+
+        const imgEl = document.createElement('img')
+
+        imgEl.src = data.BJIMG[bj]
+        imgEl.classList.add('img-thumbnail', 'rounded', 'd-block')
+        imgEl.setAttribute('id', `${bj}-image`)
+
+        const headline = document.createElement('div')
+        headline.innerText = '이미지 교체'
+        headline.classList.add('centerd')
+        buttonEl.appendChild(headline)
+        buttonEl.appendChild(imgEl)
+
+        buttonEl.addEventListener('click', (e) => {
+          e.preventDefault()
+          fileInput.click()
+        })
+        buttonEl.addEventListener('mouseenter', (e) => {
+          e.preventDefault()
+          e.target.querySelector('.centerd').style.display = 'block'
+        })
+        buttonEl.addEventListener('mouseleave', (e) => {
+          e.preventDefault()
+          e.target.querySelector('.centerd').style.display = 'none'
+        })
+
+        document.querySelector(`#${bj}-conditions`).prepend(buttonEl)
+        document.querySelector(`#${bj}-conditions`).append(fileInput)
+
+        if (typeof data.BJSOUND[bj] == 'object') {
+          addAddBtn(bj)
+
           Object.keys(data.BJSOUND[bj]).forEach((num) => {
-            renderConditionBar(data.BJSOUND[bj][num], bj, num);
-          });
-          const addCondition = document.createElement("button");
-          addCondition.innerText = "조건 추가";
-          addCondition.setAttribute("data-bj", bj);
-          addCondition.addEventListener("click", (e) => {
-            e.preventDefault();
-            const bj = e.target.getAttribute("data-bj");
-            console.log(bj);
-          });
-          document.querySelector(`#${bj}-conditions`).appendChild(addCondition);
+            renderConditionBar(bj, num, data.BJSOUND[bj][num])
+          })
+        } else if (typeof data.BJSOUND[bj] == 'string') {
+          const fileInput = document.createElement('input')
+          fileInput.setAttribute('type', 'file')
+          fileInput.setAttribute('id', `${bj}-sound`)
+          fileInput.classList.add('d-none')
+          fileInput.addEventListener('change', (e) => {
+            e.preventDefault()
+            soundFileUpload(e.target, bj)
+          })
+          document.querySelector(`#${bj}-sound-filename`).innerText =
+            data.BJSOUND[bj]
+          document.querySelector(`#${bj}-conditions`).appendChild(fileInput)
         }
-      });
-    });
+      })
+    })
 }
 
-function renderConditionBar(data, bj, num) {
-  let bjDiv = document.getElementById(bj + "-conditions");
+function renderConditionBar(bj, num, data) {
+  let bjDiv = document.getElementById(bj + '-conditions')
 
-  const conditionBar = document.createElement("div");
+  const conditionBar = document.createElement('div')
 
-  conditionBar.classList.add("d-flex", "justify-content-between");
+  conditionBar.classList.add(
+    'd-flex',
+    'justify-content-between',
+    'conditionBar'
+  )
+
+  conditionBar.setAttribute('data-number', num)
+  conditionBar.setAttribute('data-bj', bj)
 
   var html = `<div>
                 <input
@@ -155,72 +251,121 @@ function renderConditionBar(data, bj, num) {
                   data-bj="${bj}"
                   data-updown="up"
                   data-number="${num}"
-                  value="${data.UP}"
+                  value="${data ? data.UP : ''}"
                 /><span>이상</span>
                 <input
                   type="number"
                   data-bj="${bj}"
                   data-updown="down"
                   data-number="${num}"
-                  value="${data.DOWN}"
+                  value="${data ? data.DOWN : ''}"
                 /><span>이하</span>
               </div>
               <div>
                 <span>알림음 : </span>
-                <span id="${bj}-${num}-sound-filename">${data.FILE}</span>
+                <span id="${bj}-${num}-sound-filename">${
+    data ? data.FILE : ''
+  }</span>
                 <label class="btn btn-primary rounded" for="${bj}-${num}-sound">
                   파일 변경
                 </label>
-              </div>`;
+              </div>`
 
-  const fileInput = document.createElement("input");
-  fileInput.setAttribute("type", "file");
-  fileInput.setAttribute("id", `${bj}-${num}-sound`);
-  fileInput.classList.add("d-none");
-  fileInput.addEventListener("change", (e) => {
-    e.preventDefault();
-    fileUpload(e.target, bj, num);
-  });
+  const fileInput = document.createElement('input')
+  fileInput.setAttribute('type', 'file')
+  fileInput.setAttribute('id', `${bj}-${num}-sound`)
+  fileInput.classList.add('d-none')
+  fileInput.addEventListener('change', (e) => {
+    e.preventDefault()
+    soundFileUpload(e.target, bj, num)
+  })
 
-  conditionBar.innerHTML = html;
-  conditionBar.appendChild(fileInput);
+  conditionBar.innerHTML = html
+  conditionBar.appendChild(fileInput)
 
-  bjDiv.appendChild(conditionBar);
+  bjDiv.appendChild(conditionBar)
 }
 
 function renderKeyWord(mode, arr, BJ) {
-  var querySel = `#keywordPresent .${BJ} .${mode}`;
+  var querySel = `#keywordPresent .${BJ} .${mode}`
   document.querySelector(querySel).innerHTML =
-    mode == "plus" ? "플러스" : "마이너스";
+    mode == 'plus' ? '플러스' : '마이너스'
   arr.forEach((element) => {
-    var newBtn = document.createElement("Button");
-    newBtn.innerText = element;
-    newBtn.classList.add("btn", "btn-primary", "delete", "rounded");
-    newBtn.setAttribute("data-word", element);
-    newBtn.setAttribute("data-bj", BJ);
-    newBtn.setAttribute("data-plusMinus", mode);
-    newBtn.addEventListener("click", deleteBtnClick);
+    var newBtn = document.createElement('Button')
+    newBtn.innerText = element
+    newBtn.classList.add('btn', 'btn-primary', 'delete', 'rounded')
+    newBtn.setAttribute('data-word', element)
+    newBtn.setAttribute('data-bj', BJ)
+    newBtn.setAttribute('data-plusMinus', mode)
+    newBtn.addEventListener('click', deleteBtnClick)
 
-    document.querySelector(querySel).appendChild(newBtn);
-  });
+    document.querySelector(querySel).appendChild(newBtn)
+  })
 }
 
-async function fileUpload(target, bj, num) {
-  console.log(target.files[0]);
-  let formData = new FormData();
-  formData.append("bj", bj);
-  formData.append("num", num);
-  formData.append("file", target.files[0]);
+async function soundFileUpload(target, bj, num) {
+  console.log(target.files[0])
+  let formData = new FormData()
+  formData.append('bj', bj)
+  if (num) {
+    formData.append('num', num)
+  }
+  formData.append('file', target.files[0])
 
   // 파일 음악파일 만 필터링
   // 기존 파일 삭제 여부
-  await fetch("admin/setting/sound", {
-    method: "POST",
+  await fetch('admin/setting/sound', {
+    method: 'POST',
     body: formData,
   })
     .then((response) => response.json())
     .then((response) => {
-      const fileNameSpan = `#${bj}-${num}-sound-filename`;
-      document.querySelector(fileNameSpan).innerText = response.originalname;
-    });
+      let fileNameSpan
+      if (num) {
+        fileNameSpan = `#${bj}-${num}-sound-filename`
+      } else {
+        fileNameSpan = `#${bj}-sound-filename`
+      }
+      alert('성공적으로 저장되었습니다')
+      document.querySelector(fileNameSpan).innerText = response.originalname
+    })
+}
+
+async function imageFileUpload(target, bj) {
+  console.log(target.files[0])
+  let formData = new FormData()
+  formData.append('bj', bj)
+  formData.append('file', target.files[0])
+
+  // 파일 음악파일 만 필터링
+  // 기존 파일 삭제 여부
+  await fetch('admin/setting/image', {
+    method: 'POST',
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      let fileNameSpan
+      fileNameSpan = `#${bj}-image`
+      alert('성공적으로 저장되었습니다')
+      document.querySelector(
+        fileNameSpan
+      ).src = `images/${response.originalname}`
+    })
+}
+
+function addAddBtn(bj) {
+  const addCondition = document.createElement('button')
+  addCondition.innerText = '조건 추가'
+  addCondition.setAttribute('data-bj', bj)
+  addCondition.classList.add('w-50', 'mx-auto')
+  addCondition.addEventListener('click', (e) => {
+    e.preventDefault()
+    const bj = e.target.getAttribute('data-bj')
+    const num =
+      document.querySelectorAll(`#${bj}-conditions .conditionBar`).length + 1
+
+    renderConditionBar(bj, num)
+  })
+  document.querySelector(`#${bj}-conditions`).appendChild(addCondition)
 }

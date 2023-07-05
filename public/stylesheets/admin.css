@@ -10,3 +10,24 @@
   color: white;
   cursor: pointer;
 }
+
+.img-thumbnail:hover {
+  filter: grayscale(50);
+  opacity: 30%;
+  cursor: pointer;
+}
+
+.imageBtn {
+  width: 300px;
+}
+
+.imageBtn .centerd {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 45px;
+  font-weight: 700;
+  color: white;
+  display: none;
+}

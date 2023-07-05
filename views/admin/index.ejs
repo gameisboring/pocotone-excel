@@ -64,7 +64,7 @@
     <div class="row mx-0">
       <div class="col-12 col-lg-4 bg-secondary p-0">
         <h1>후원 알림 설정</h1>
-        <form class="mt-4">
+        <form class="mt-4" id="scriptSaveForm">
           <fieldset>
             <legend><strong>알림 스크립트 변경</strong></legend>
             <div class="form-group">
@@ -72,6 +72,7 @@
                 type="text"
                 class="form-control"
                 id="notiScriptInput"
+                required
                 placeholder="ex) [name]님. [break]별풍선 [value]개 감사합니다.[break][msg]"
               /><small>아래의 옵션과 조합하여 사용하세요</small> <br /><br />
               <fieldset>
@@ -86,6 +87,121 @@
             </div>
             <button type="submit" class="btn btn-primary mt-2">
               스크립트 저장
+            </button>
+          </fieldset>
+        </form>
+        <form class="mt-4" id="donaLogSaveForm">
+          <fieldset>
+            <legend><strong>도네이션 로그 추가</strong></legend>
+            <div class="d-flex justify-content-between">
+              <div>
+                <span>BJ</span>
+                <div class="btn-group" role="group">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="newLogSelBJ"
+                    value="ori"
+                    id="bj-sel-ori-new"
+                  />
+                  <label class="btn btn-outline-primary" for="bj-sel-ori-new"
+                    >오리꿍</label
+                  >
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="newLogSelBJ"
+                    value="hiyoko"
+                    id="bj-sel-hiyoko-new"
+                  />
+                  <label class="btn btn-outline-primary" for="bj-sel-hiyoko-new"
+                    >히요코</label
+                  >
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="newLogSelBJ"
+                    value="yam"
+                    id="bj-sel-yam-new"
+                  />
+                  <label class="btn btn-outline-primary" for="bj-sel-yam-new"
+                    >얌</label
+                  >
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="newLogSelBJ"
+                    value="dal"
+                    id="bj-sel-dal-new"
+                  />
+                  <label class="btn btn-outline-primary" for="bj-sel-dal-new"
+                    >달체솜</label
+                  >
+                </div>
+              </div>
+              <div>
+                <span>점수</span>
+                <div class="btn-group" role="group">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="newLogPlusMinus"
+                    value="plus"
+                    id="plusMinus-plus-new"
+                  />
+                  <label
+                    class="btn btn-outline-primary"
+                    for="plusMinus-plus-new"
+                    >플러스</label
+                  >
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="newLogPlusMinus"
+                    value="minus"
+                    id="plusMinus-minus-new"
+                  />
+                  <label
+                    class="btn btn-outline-primary"
+                    for="plusMinus-minus-new"
+                    >마이너스</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between">
+              <div>
+                <label for="newLogValue">후원 개수 </label
+                ><input
+                  type="number"
+                  name="newLogValue"
+                  class="form-control"
+                  id="newLogValue"
+                />
+              </div>
+              <div>
+                <label for="newLogName">후원 닉네임 </label
+                ><input
+                  type="text"
+                  id="newLogName"
+                  name="newLogName"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="d-flex flex-column">
+              <label for="newLogMsg">메세지</label
+              ><input
+                class="form-control"
+                name="newLogMsg"
+                id="newLogMsg"
+                type="text"
+                value=""
+                placeholder=""
+              />
+            </div>
+            <button id="newLogSaveBtn" class="btn btn-primary">
+              도네 로그 등록
             </button>
           </fieldset>
         </form>
@@ -115,22 +231,22 @@
               <div id="ori-conditions" class="d-flex flex-column">
                 <h2>오리꿍</h2>
               </div>
-              <div id="yam-conditions" class="d-flex flex-column">
+              <div id="yam-conditions" class="d-flex flex-column mt-4">
                 <h2>얌</h2>
               </div>
-              <div id="hiyoko-conditions" class="d-flex flex-column">
+              <div id="hiyoko-conditions" class="d-flex flex-column mt-4">
                 <h2>히요코</h2>
               </div>
-              <div id="dal-conditions" class="d-flex flex-column">
+              <div id="dal-conditions" class="d-flex flex-column mt-4">
                 <h2>달체솜</h2>
               </div>
-              <div id="default-conditions" class="d-flex flex-column">
+              <div id="default-conditions" class="d-flex flex-column mt-4">
                 <h2>기본</h2>
                 <div
-                  class="d-flex justify-content-between conditionBar"
+                  class="d-flex justify-content-end conditionBar"
                   data-bj="default"
                 >
-                  <div>
+                  <div class="">
                     <span>알림음 : </span>
                     <span id="default-sound-filename"></span>
                     <label class="btn btn-primary rounded" for="default-sound">
@@ -266,10 +382,10 @@
   <!-- Optional JavaScript -->
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io.connect('http://localhost:<%= port %>', {
-      path: '/socket.io',
-      transports: ['websocket'],
-    })
+    const socket = io.connect("http://localhost:<%= port %>", {
+      path: "/socket.io",
+      transports: ["websocket"],
+    });
   </script>
   <script src="/javascripts/admin.js"></script>
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->

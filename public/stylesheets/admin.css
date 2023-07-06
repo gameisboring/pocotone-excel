@@ -31,3 +31,13 @@
   color: white;
   display: none;
 }
+
+#boardSettingImages,
+#rankingSettingImages {
+  font-size: 20px;
+}
+
+#boardSettingImages img,
+#rankingSettingImages img {
+  width: 300px;
+}

@@ -32,7 +32,17 @@ async function tick() {
   if (list.length > 0) {
     console.log(`현재 남은 알림 수 : ${list.length} 개`)
     const el = list.shift()
-    console.log(el)
+
+    if (el.bj == 'ori') {
+      el.bj = '오리꿍'
+    } else if (el.bj == 'yam') {
+      el.bj = '얌'
+    } else if (el.bj == 'dal') {
+      el.bj = '달체솜'
+    } else if (el.bj == 'hiyoko') {
+      el.bj = '히요코'
+    }
+
     ttsUrl +=
       tssDialogGen(el, el.config.script) +
       '/' +

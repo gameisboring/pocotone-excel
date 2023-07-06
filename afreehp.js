@@ -73,6 +73,7 @@ module.exports = async (server) => {
             config,
             data.data
           )
+
           var soundUrl = await getSoundSrc(config.BJSOUND, data.data.value, BJ)
           if (data.data.broad == 'afreeca' && type == 'star') {
             console.log(

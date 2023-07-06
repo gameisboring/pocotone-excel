@@ -139,6 +139,16 @@ router.get('/board/data', function (req, res) {
   res.send(result)
 })
 
+router.get('/board/img', function (req, res) {
+  var files = fs.readdirSync('public/images/bj')
+  res.send(files)
+})
+
+router.get('/rank/img', function (req, res) {
+  var files = fs.readdirSync('public/images/rank')
+  res.send(files)
+})
+
 router.get('/rank/data', function (req, res) {
   let result = new Array()
   let donationScore = new Object({})
@@ -171,7 +181,14 @@ router.get('/rank/data', function (req, res) {
     result[i].rank = ++i
   }
 
-  res.send(result)
+  if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {
+    console.log(`please write file "notiConfig.json"`)
+  } else {
+    let setting = JSON.parse(
+      fs.readFileSync(path.join('config', 'notiConfig.json'))
+    )
+    res.json({ result: result, limit: setting.RANK_LIMIT })
+  }
 })
 
 module.exports = router

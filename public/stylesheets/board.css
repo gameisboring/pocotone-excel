@@ -46,7 +46,7 @@ img {
   height: auto;
   position: absolute;
   /* top:0; */
-  bottom: 0;
+  top: 0;
   left: 0;
   /* right: 0; */
   margin: auto;
@@ -141,8 +141,8 @@ img {
 
 .bar .barText .contribute {
   flex-grow: 1.8;
-  font-family: 'NanumSquareNeo-Bold';
-  font-weight: 800;
+  font-family: 'NanumSquareNeo-Heavy';
+  font-weight: 900;
 }
 
 .footer {

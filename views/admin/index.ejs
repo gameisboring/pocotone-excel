@@ -21,7 +21,7 @@
   </head>
   <body class="vw-100 vh-100">
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-      <a class="navbar-brand" href="/admin">Navbar</a>
+      <a class="navbar-brand" href="/admin">ADMIN</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -38,10 +38,10 @@
         id="navbarNavAltMarkup"
       >
         <div class="navbar-nav">
-          <a class="nav-item nav-link active" href="/admin"
+          <!-- <a class="nav-item nav-link active" href="/admin"
             >Home <span class="sr-only"></span
-          ></a>
-          <a class="nav-item nav-link" href="/admin/setting">setting</a>
+          ></a> -->
+          <!-- <a class="nav-item nav-link" href="/admin/setting">setting</a> -->
         </div>
         <div class="navbar-nav">
           <span class="nav-link"
@@ -205,6 +205,49 @@
             </button>
           </fieldset>
         </form>
+        <form class="mt-4" id="boardSettingForm">
+          <fieldset>
+            <legend><strong>점수판 세팅</strong></legend>
+            <div class="d-flex justify-content-between">
+              <div>
+                <label for="boardOpacity">점수판 투명도 조절</label
+                ><input
+                  class=""
+                  name="boardOpacity"
+                  id="boardOpacity"
+                  type="number"
+                  value=""
+                  placeholder=""
+                /><small>1부터 100사이 숫자 입력</small>
+              </div>
+              <button type="submit" class="btn btn-primary">설정 저장</button>
+            </div>
+          </fieldset>
+        </form>
+        <div class="d-flex flex-column" id="boardSettingImages"></div>
+
+        <form class="mt-4" id="rankingSettingForm">
+          <fieldset>
+            <legend><strong>랭킹판 세팅</strong></legend>
+            <div class="d-flex justify-content-between">
+              <div>
+                <label for="rankOpacity">랭킹판 투명도 조절</label
+                ><input
+                  class=""
+                  name="rankOpacity"
+                  id="rankOpacity"
+                  type="number"
+                  value=""
+                  placeholder=""
+                />
+                <small>1부터 100사이 숫자 입력</small>
+              </div>
+              <button type="submit" class="btn btn-primary">설정 저장</button>
+            </div>
+          </fieldset>
+        </form>
+        <div class="d-flex flex-column" id="rankingSettingImages"></div>
+
         <!-- <form class="mt-4">
           <fieldset>
             <legend><strong>알림 컨트롤</strong></legend>
@@ -382,10 +425,10 @@
   <!-- Optional JavaScript -->
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io.connect("http://localhost:<%= port %>", {
-      path: "/socket.io",
-      transports: ["websocket"],
-    });
+    const socket = io.connect('http://localhost:<%= port %>', {
+      path: '/socket.io',
+      transports: ['websocket'],
+    })
   </script>
   <script src="/javascripts/admin.js"></script>
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -40,8 +40,12 @@ function renderListVar() {
     .then((response) => response.json())
     .then((response) => {
       body.innerHTML = ''
-      for (var i in response) {
-        body.innerHTML += addListBar(response[i])
+      console.log(response)
+      for (var i = 0; i < response.limit; i++) {
+        console.log()
+        body.innerHTML += addListBar(response.result[i])
       }
     })
 }
+
+// document.querySelector('#main').style.opacity = 1

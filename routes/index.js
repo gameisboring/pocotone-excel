@@ -140,7 +140,7 @@ router.get('/board/data', function (req, res) {
 })
 
 router.get('/board/img', function (req, res) {
-  var files = fs.readdirSync('public/images/bj')
+  var files = fs.readdirSync('public/images/board')
   res.send(files)
 })
 

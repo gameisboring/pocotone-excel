@@ -1,8 +1,11 @@
+document.addEventListener('DOMContentLoaded', async function () {
+  renderListVar()
+  setOpacity()
+})
+
 var fetchInterval = null
 
 var body = document.querySelector('#main .body')
-
-renderListVar()
 
 fetchInterval = setInterval(renderListVar, 5000)
 
@@ -37,7 +40,7 @@ function addListBar(data) {
   }
 
   var el = `<div class="bar">
-  <img src="images/bj/listbar_${barImageFileName}.png" alt="" />
+  <img src="images/board/listbar_${barImageFileName}.png" alt="" />
   <div class="barText menu">
     <span class="rank">${data.rank}</span>
     <span class="bj">${data.BJ}</span>
@@ -59,5 +62,16 @@ function renderListVar() {
       for (var i in response) {
         body.innerHTML += addListBar(response[i])
       }
+    })
+}
+
+function setOpacity() {
+  fetch('notification/setting', {
+    method: 'GET',
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response)
+      document.getElementById('main').style.opacity = response.BOARD_OP / 100
     })
 }

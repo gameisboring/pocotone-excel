@@ -58,7 +58,7 @@ img {
 
 .bar {
   /* margin-left: 1px; */
-  background-image: url('../images/barBack.png');
+  background-image: url('../images/board/barBack.png');
   background-repeat: no-repeat;
   background-size: cover;
   font-weight: 700;

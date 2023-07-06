@@ -453,18 +453,18 @@ function renderBoardSetting() {
       response.forEach((image) => {
         var div = document.createElement('div')
         div.classList.add('d-flex', 'flex-column')
-        div.setAttribute('id', `bj-${image}`)
-        div.setAttribute('data-cat', `bj`)
+        div.setAttribute('id', `board-${image}`)
+        div.setAttribute('data-cat', `board`)
         div.setAttribute('data-filename', image)
         var span = document.createElement('div')
         span.innerText = image
         var img = document.createElement('img')
-        img.src = `images/bj/${image}`
+        img.src = `images/board/${image}`
         img.id = `board-img-${image}`
         var file = document.createElement('input')
         file.type = 'file'
-        file.setAttribute('id', `bj-file-${image}`)
-        file.setAttribute('data-cat', `bj`)
+        file.setAttribute('id', `board-file-${image}`)
+        file.setAttribute('data-cat', `board`)
         file.setAttribute('data-filename', image)
         file.classList.add('d-none')
         file.addEventListener('change', (e) => {
@@ -474,10 +474,10 @@ function renderBoardSetting() {
             category: e.target.getAttribute('data-cat'),
             file: e.target.files[0],
           }
-          bjImgFileUpload(data)
+          boardImgFileUpload(data)
         })
         var label = document.createElement('label')
-        label.setAttribute('for', `bj-file-${image}`)
+        label.setAttribute('for', `board-file-${image}`)
         label.classList.add('btn', 'btn-primary')
         label.innerText = '변경'
         var innerDiv = document.createElement('div')
@@ -555,25 +555,95 @@ function rankImgFileUpload(data) {
     .then((response) => response.json())
     .then((response) => {
       alert('성공적으로 저장되었습니다')
-      alert(response)
-      /* var querySel = `board-img-${data.fileName}`
-      document.querySelector(
-        querySel
-      ).src = `images/${data.category}/${data.fileName}` */
+      console.log(response)
+      var img = document.getElementById(`rank-img-${data.fileName}`)
+      img.src = `images/${data.category}/${data.fileName}`
     })
 }
-function bjImgFileUpload(data) {
+function boardImgFileUpload(data) {
   console.log(data)
+
+  let formData = new FormData()
+  formData.append('category', data.category)
+  formData.append('fileName', data.fileName)
+  formData.append('file', data.file)
+
+  fetch(`admin/${data.category}/image`, {
+    method: 'POST',
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      alert('성공적으로 저장되었습니다')
+      console.log(response)
+      var img = document.getElementById(`board-img-${data.fileName}`)
+      img.src = `images/${data.category}/${data.fileName}`
+    })
 }
 
 document.querySelector('#boardSettingForm').addEventListener('submit', (e) => {
   e.preventDefault()
-  console.log(e.target.querySelector('input').value)
+  var opacity = e.target.querySelector('input').value
+  if (opacity > 100 && opacity < 0) {
+    alert('1부터 100까지의 숫자를 입력해주세요')
+  } else {
+    fetch(`admin/board/opacity`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ opacity: opacity }),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response)
+        alert('성공적으로 저장되었습니다')
+      })
+  }
 })
 
 document
   .querySelector('#rankingSettingForm')
   .addEventListener('submit', (e) => {
     e.preventDefault()
-    console.log(e.target.querySelector('input').value)
+    var opacity = e.target.querySelector('input').value
+    if (opacity > 100 && opacity < 0) {
+      alert('1부터 100까지의 숫자를 입력해주세요')
+    } else {
+      fetch(`admin/rank/opacity`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ opacity: opacity }),
+      })
+        .then((response) => response.json())
+        .then((response) => {
+          console.log(response)
+          alert('성공적으로 저장되었습니다')
+        })
+    }
+  })
+
+document
+  .querySelector('#rankingLimitSettingForm')
+  .addEventListener('submit', (e) => {
+    e.preventDefault()
+    var limit = e.target.querySelector('input').value
+    if (limit < 0) {
+      alert('1이상의 숫자를 입력해주세요')
+    } else {
+      fetch(`admin/rank/limit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ limit: limit }),
+      })
+        .then((response) => response.json())
+        .then((response) => {
+          console.log(response)
+          alert('성공적으로 저장되었습니다')
+        })
+    }
   })

@@ -32,7 +32,7 @@ const ImageStorage = multer.diskStorage({
 })
 const BoardImageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.normalize('public/images/bj'))
+    cb(null, path.join('public/images/', req.body.category))
   },
   filename: function (req, file, cb) {
     cb(null, req.body.fileName)
@@ -44,7 +44,6 @@ const RankImageStorage = multer.diskStorage({
     cb(null, path.normalize('public/images/rank'))
   },
   filename: function (req, file, cb) {
-    console.log(req.body)
     cb(null, req.body.fileName)
   },
 })
@@ -165,7 +164,8 @@ router.post(
   '/board/image',
   BoardSoundUpload.fields([{ name: 'file' }]),
   function (req, res) {
-    console.log(req.body)
+    console.log('router function', req.body)
+    res.json({ ok: true })
   }
 )
 
@@ -173,9 +173,79 @@ router.post(
   '/rank/image',
   RankImageUpload.fields([{ name: 'file' }]),
   function (req, res) {
-    console.log(req.body)
+    console.log('router function', req.body)
+    res.json({ ok: true })
   }
 )
+
+router.post('/board/opacity', function (req, res) {
+  console.log('/rank/opacity function', req.body.opacity)
+  if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {
+    console.log(`please write file "notiConfig.json"`)
+  } else {
+    let setting = JSON.parse(
+      fs.readFileSync(path.join('config', 'notiConfig.json'))
+    )
+
+    setting.BOARD_OP = req.body.opacity
+
+    try {
+      fs.writeFileSync(
+        path.join('config', 'notiConfig.json'),
+        JSON.stringify(setting)
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  res.json({ ok: true })
+})
+
+router.post('/rank/opacity', function (req, res) {
+  console.log('/rank/opacity function', req.body.opacity)
+  if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {
+    console.log(`please write file "notiConfig.json"`)
+  } else {
+    let setting = JSON.parse(
+      fs.readFileSync(path.join('config', 'notiConfig.json'))
+    )
+
+    setting.RANK_OP = req.body.opacity
+
+    try {
+      fs.writeFileSync(
+        path.join('config', 'notiConfig.json'),
+        JSON.stringify(setting)
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  res.json({ ok: true })
+})
+
+router.post('/rank/limit', function (req, res) {
+  console.log('/rank/limit function', req.body.limit)
+  if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {
+    console.log(`please write file "notiConfig.json"`)
+  } else {
+    let setting = JSON.parse(
+      fs.readFileSync(path.join('config', 'notiConfig.json'))
+    )
+
+    setting.RANK_LIMIT = req.body.limit
+
+    try {
+      fs.writeFileSync(
+        path.join('config', 'notiConfig.json'),
+        JSON.stringify(setting)
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  res.json({ ok: true })
+})
 
 router.post('/script', function (req, res) {
   if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {

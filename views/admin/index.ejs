@@ -224,6 +224,7 @@
             </div>
           </fieldset>
         </form>
+
         <div class="d-flex flex-column" id="boardSettingImages"></div>
 
         <form class="mt-4" id="rankingSettingForm">
@@ -236,6 +237,26 @@
                   class=""
                   name="rankOpacity"
                   id="rankOpacity"
+                  type="number"
+                  value=""
+                  placeholder=""
+                />
+                <small>1부터 100사이 숫자 입력</small>
+              </div>
+              <button type="submit" class="btn btn-primary">설정 저장</button>
+            </div>
+          </fieldset>
+        </form>
+        <form class="mt-4" id="rankingLimitSettingForm">
+          <fieldset>
+            <legend><strong>랭킹 길이 세팅</strong></legend>
+            <div class="d-flex justify-content-between">
+              <div>
+                <label for="rankLimit">1 이상의 숫자 입력</label
+                ><input
+                  class=""
+                  name="rankLimit"
+                  id="rankLimit"
                   type="number"
                   value=""
                   placeholder=""
@@ -299,7 +320,13 @@
                 </div>
               </div>
             </div>
-            <button type="submit" id="conditionConfigSaveBtn">설정 저장</button>
+            <button
+              type="submit"
+              class="btn btn-primary w-100 mt-4"
+              id="conditionConfigSaveBtn"
+            >
+              설정 저장
+            </button>
           </fieldset>
         </form>
       </div>

@@ -13,7 +13,7 @@
   <body></body>
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io.connect('http://localhost:<%= port %>', {
+    const socket = io.connect('http://<%= addr %>:<%= port %>', {
       path: '/socket.io',
       transports: ['websocket'],
     })

@@ -6,39 +6,40 @@
   font-style: normal;
 }
 
+input,
+button {
+  border: none;
+  /*border-radius:4px 가능 */
+}
+
+input:focus,
+input:active,
+button:focus,
+button:active {
+  outline: none;
+  box-shadow: none;
+}
 .swal2-container {
-  background: rgba(0, 0, 0, 0);
-  overflow-y: auto;
-  display: grid;
-  position: fixed;
-  z-index: 1060;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  background: transparent;
+  overflow-y: hidden !important;
+  position: absolute;
+  padding: 0;
   left: 0;
-  box-sizing: border-box;
-  align-items: center;
-  height: 100%;
-  padding: 0.625em;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  top: 0;
+  width: 100%;
 }
 
 .swal2-popup {
   background: transparent;
+  display: block !important;
   position: relative;
-  top: 20px;
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  box-sizing: border-box;
-  grid-template-columns: minmax(0, 100%);
-  width: 32em;
+  width: 100%;
   max-width: 100%;
-  padding: 0 0 1.25em;
   border: none;
-  border-radius: 0px;
-  box-shadow: 0 0 0px rgba(0, 0, 0, 0);
 }
 
 /* 전체 텍스트 설정 */

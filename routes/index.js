@@ -8,21 +8,35 @@ const { getNewestList } = require('../fileControl')
 router.use(express.json())
 router.use(express.urlencoded({ extended: false }))
 
+var addr = process.env.NODE_ENV == 'production' ? 'nstream.kr' : 'localhost'
+console.log(addr)
 /* GET home page. */
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Main Page' })
 })
 
 router.get('/notification', function (req, res) {
-  res.render('notification', { title: 'Notification', port: process.env.PORT })
+  res.render('notification', {
+    title: 'Notification',
+    port: process.env.PORT,
+    addr: addr,
+  })
 })
 
 router.get('/board', function (req, res) {
-  res.render('board', { title: 'Board', port: process.env.PORT })
+  res.render('board', {
+    title: 'Board',
+    port: process.env.PORT,
+    addr: addr,
+  })
 })
 
 router.get('/rank', function (req, res) {
-  res.render('rank', { title: 'Rank', port: process.env.PORT })
+  res.render('rank', {
+    title: 'Rank',
+    port: process.env.PORT,
+    addr: addr,
+  })
 })
 
 router.get('/notification/setting', function (req, res) {

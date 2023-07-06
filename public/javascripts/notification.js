@@ -11,7 +11,7 @@ socket.on('news', async function (data) {
   list.push(data)
 })
 
-/* socket.on('stop', function (data) {
+socket.on('stop', function (data) {
   leftTimer = Swal.getTimerLeft()
   clearTimeout(notiPopUpInterval)
   Swal.stopTimer()
@@ -20,9 +20,11 @@ socket.on('news', async function (data) {
 socket.on('resume', function (data) {
   notiPopUpInterval = setTimeout(tick, leftTimer)
   Swal.resumeTimer()
-}) */
+})
 notiPopUpInterval = setTimeout(tick, 1000)
-socket.on('connect', function (reason) {})
+socket.on('connect', function (reason) {
+  socket.emit('reply', `open notification | ${new Date()}`)
+})
 
 async function tick() {
   var ttsReady = false
@@ -42,14 +44,15 @@ async function tick() {
     } else if (el.bj == 'hiyoko') {
       el.bj = '히요코'
     }
+    var reqUrl = el.config.script
+    Object.keys(el).forEach(function (key) {
+      reqUrl = reqUrl.replace('[' + key + ']', el[key])
+    })
+
+    reqUrl = replaceAll(reqUrl, '[break]', '')
 
     ttsUrl +=
-      tssDialogGen(el, el.config.script) +
-      '/' +
-      el.config.SPEAKING_RATE +
-      '/' +
-      el.config.SPEAKING_VOICE
-
+      reqUrl + '/' + el.config.SPEAKING_RATE + '/' + el.config.SPEAKING_VOICE
     let notiTextToSpeach
     let notiSound
 
@@ -72,6 +75,7 @@ async function tick() {
       soundReady = true
       checkBothAudiosReady()
     }
+
     notiTextToSpeach.onloadedmetadata = function () {
       ttsReady = true
       checkBothAudiosReady()
@@ -101,14 +105,15 @@ async function tick() {
 async function sweetAlert(data, notiSound, notiTextToSpeach, timer) {
   Swal.fire({
     title: alertTextGen(data, data.config.script),
-    html:
-      '<strong></strong> <br/><br/>' +
+    /* html:
+     '<strong></strong> <br/><br/>' +
       '<button id="stop" class="btn btn-danger">' +
       'STOP' +
       '</button><br/><br/>' +
       '<button id="resume" class="btn btn-success" disabled>' +
       'RESUME' +
-      '</button><br/>',
+      '</button><br/>', */
+    position: 'top-start',
     timer: timer,
     imageUrl: data.imgUrl,
     imageAlt: 'A image',
@@ -118,11 +123,11 @@ async function sweetAlert(data, notiSound, notiTextToSpeach, timer) {
       const content = Swal.getHtmlContainer()
       const $ = content.querySelector.bind(content)
 
-      timerInterval = setInterval(() => {
+      /* timerInterval = setInterval(() => {
         Swal.getHtmlContainer().querySelector('strong').textContent = (
           Swal.getTimerLeft() / 1000
         ).toFixed(0)
-      }, 100)
+      }, 100) */
 
       notiSound.play()
       var setTimeoutID = setTimeout(() => {
@@ -140,7 +145,7 @@ async function sweetAlert(data, notiSound, notiTextToSpeach, timer) {
 }
 
 function tssDialogGen(data, script) {
-  var reqUrl = String(script)
+  var reqUrl = script
   Object.keys(data).forEach(function (key) {
     reqUrl = reqUrl.replace('[' + key + ']', data[key])
   })
@@ -156,6 +161,10 @@ function alertTextGen(data, script) {
       `<span class="${key}">${data[key]}</span>`
     )
   })
-  text = text.replaceAll('[break]', `<br>`)
+  text = replaceAll(text, '[break]', `<br>`)
   return text
+}
+
+function replaceAll(str, searchStr, replaceStr) {
+  return str.split(searchStr).join(replaceStr)
 }

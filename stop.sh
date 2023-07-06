@@ -1,0 +1,1 @@
+sudo docker stop pocotone-excel-app && sudo docker rm pocotone-excel-app && sudo docker rmi pocotone-excel

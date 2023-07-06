@@ -8,10 +8,10 @@ socket.on('afreecaHpUrl', async (msg) => {
   document.querySelector('#afreecaHpUrl').innerText = msg
 })
 
-document.querySelector('#urlSettingBtn').addEventListener('click', (e) => {
+document.querySelector('#urlSettingForm').addEventListener('submit', (e) => {
   e.preventDefault()
   console.log('restart button clicked')
-  socket.emit('restart', document.querySelector('#urlSettingInput').value)
+  socket.emit('urlSetting', document.querySelector('#urlSettingInput').value)
 })
 
 document.querySelector('#scriptSaveForm').addEventListener('submit', (e) => {
@@ -29,6 +29,16 @@ document.querySelector('#scriptSaveForm').addEventListener('submit', (e) => {
       console.log(response)
       e.target.querySelector('input').value = ''
     })
+})
+
+document.querySelector('#serverResetBtn').addEventListener('click', (e) => {
+  e.preventDefault()
+  var result = confirm(
+    '서버가 재시작 됩니다. 설정은 그대로 유지되며, 후원기록은 초기화 됩니다.'
+  )
+  if (result) {
+    socket.emit('restart', 'restart!')
+  }
 })
 
 document.querySelector('#donaLogSaveForm').addEventListener('submit', (e) => {
@@ -192,7 +202,7 @@ function deleteBtnClick(event) {
   console.log(data)
 }
 
-/* document.querySelector('#stopBtn').addEventListener('click', (e) => {
+document.querySelector('#stopBtn').addEventListener('click', (e) => {
   e.preventDefault()
   e.target.classList.add('d-none')
   document.querySelector('#resumeBtn').classList.remove('d-none')
@@ -203,7 +213,7 @@ document.querySelector('#resumeBtn').addEventListener('click', (e) => {
   e.target.classList.add('d-none')
   document.querySelector('#stopBtn').classList.remove('d-none')
   socket.emit('resume', 'resume')
-}) */
+})
 
 async function renderNowKeyWord() {
   await fetch('/notification/setting')

@@ -131,6 +131,9 @@ module.exports = async (server) => {
   SocketIO.on('connection', (socket) => {
     socket.emit('afreecaHpUrl', settings.afreehp.alertbox_url)
 
+    socket.on('reply', (msg) => {
+      console.log(msg)
+    })
     socket.on('stop', (msg) => {
       console.log(msg)
       SocketIO.emit('stop', 'stop button click')
@@ -141,18 +144,30 @@ module.exports = async (server) => {
       SocketIO.emit('resume', 'resume button click')
     })
 
-    socket.on('restart', (msg) => {
-      console.log('restart server : afreeca helper url : ', msg)
-      settings.afreehp.alertbox_url = msg
-      delete settings.afreehp.idx
-      fs.writeFileSync(
-        path.join('config', 'settings.json'),
-        JSON.stringify(settings)
+    socket.on('urlSetting', async (msg) => {
+      console.log('urlSetting : afreeca helper url : ', msg)
+      /* {"afreehp":{"use":true,"alertbox_url":"http://afreehp.kr/page/VZWWnKaZx8bYmqSVwJY"}} */
+      var newSetting = JSON.parse(
+        fs.readFileSync(path.join('config', 'settings.json'))
       )
+      newSetting.afreehp.alertbox_url = msg
+      delete newSetting.afreehp.idx
+      console.log(newSetting)
+      newSetting = await checkAfreeHpIdx(newSetting)
+      if (typeof newSetting == 'object') {
+        fs.writeFileSync(
+          path.join('config', 'settings.json'),
+          JSON.stringify(newSetting)
+        )
 
-      socket.emit('afreecaHpUrl', settings.afreehp.alertbox_url)
+        socket.emit('afreecaHpUrl', newSetting.afreehp.alertbox_url)
+        process.exit(1)
+      }
+    })
 
-      connect_afreehp()
+    socket.on('restart', async (msg) => {
+      console.log(msg)
+      process.exit(1)
     })
   })
 

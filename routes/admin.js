@@ -10,6 +10,8 @@ const { dateFormat } = require('../time')
 router.use(express.json())
 router.use(express.urlencoded({ extended: false }))
 
+var addr = process.env.NODE_ENV == 'production' ? 'nstream.kr' : 'localhost'
+
 const SoundStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     if (req.body.bj == 'default') {
@@ -54,13 +56,18 @@ const BoardSoundUpload = multer({ storage: BoardImageStorage })
 const RankImageUpload = multer({ storage: RankImageStorage })
 
 router.get('/', function (req, res) {
-  res.render('admin/index', { title: 'admin main', port: process.env.PORT })
+  res.render('admin/index', {
+    title: 'admin main',
+    port: process.env.PORT,
+    addr: addr,
+  })
 })
 
 router.get('/setting', function (req, res) {
   res.render('admin/setting', {
     title: 'admin setting',
     port: process.env.PORT,
+    addr: addr,
   })
 })
 

@@ -19,7 +19,7 @@
     <title><%= title %></title>
     <link rel="stylesheet" href="stylesheets/admin.css" />
   </head>
-  <body class="vw-100 vh-100">
+  <body class="vh-100">
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
       <a class="navbar-brand" href="/admin">ADMIN</a>
       <button
@@ -42,22 +42,29 @@
             >Home <span class="sr-only"></span
           ></a> -->
           <!-- <a class="nav-item nav-link" href="/admin/setting">setting</a> -->
+          <button id="serverResetBtn" class="btn btn-secondary">
+            서버리셋
+          </button>
         </div>
         <div class="navbar-nav">
           <span class="nav-link"
             >현재 아프리카 도우미 URL : <span id="afreecaHpUrl"></span
           ></span>
-          <form class="d-flex">
+          <form class="d-flex" id="urlSettingForm">
             <input
               type="text"
-              class="form-control"
+              class=""
               placeholder="URL"
               id="urlSettingInput"
             />
+            <button
+              id="urlSettingBtn"
+              type="submit"
+              class="btn btn-secondary btn-sm"
+            >
+              설정
+            </button>
           </form>
-          <button id="urlSettingBtn" class="btn btn-secondary btn-sm">
-            설정
-          </button>
         </div>
       </div>
     </nav>
@@ -268,24 +275,6 @@
           </fieldset>
         </form>
         <div class="d-flex flex-column" id="rankingSettingImages"></div>
-
-        <!-- <form class="mt-4">
-          <fieldset>
-            <legend><strong>알림 컨트롤</strong></legend>
-            <div class="form-group">
-              <button type="button" class="btn btn-secondary" id="stopBtn">
-                멈춤
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary d-none"
-                id="resumeBtn"
-              >
-                재개
-              </button>
-            </div>
-          </fieldset>
-        </form> -->
       </div>
       <div class="col-12 col-lg-4 bg-success p-0">
         <form class="mt-4">
@@ -331,8 +320,36 @@
         </form>
       </div>
       <div class="col-12 col-lg-4 bg-secondary p-0">
-        <h1>데이터 수집 설정</h1>
+        <div>
+          <h4>어드민 페이지</h4>
+          <h4>nstream.kr:3033/admin</h4>
+          <h4>알림창</h4>
+          <h4>nstream.kr:3033/notification</h4>
+          <h4>점수판</h4>
+          <h4>nstream.kr:3033/board</h4>
+          <h4>후원랭킹</h4>
+          <h4>nstream.kr:3033/rank</h4>
+        </div>
         <form class="mt-4">
+          <fieldset>
+            <legend><strong>알림 컨트롤</strong></legend>
+            <div class="form-group">
+              <button type="button" class="btn btn-secondary" id="stopBtn">
+                멈춤
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary d-none"
+                id="resumeBtn"
+              >
+                재개
+              </button>
+            </div>
+          </fieldset>
+        </form>
+
+        <form class="mt-4">
+          <h1>데이터 수집 설정</h1>
           <legend>현재 키워드</legend>
           <div id="keywordPresent">
             <div class="ori">
@@ -452,7 +469,7 @@
   <!-- Optional JavaScript -->
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io.connect('http://localhost:<%= port %>', {
+    const socket = io.connect('http://<%= addr %>:<%= port %>', {
       path: '/socket.io',
       transports: ['websocket'],
     })

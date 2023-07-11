@@ -1,1 +1,1 @@
-sudo docker run --name pocotone-excel-app -p 3033:3033 -d --restart=unless-stopped pocotone-excel
+sudo docker run --name pocotone-excel-app -p 3033:3033 -d -v /logs:/logs --restart=unless-stopped pocotone-excel

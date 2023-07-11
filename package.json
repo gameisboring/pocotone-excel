@@ -21,7 +21,8 @@
     "request": "^2.88.2",
     "socket.io": "^2.5.0",
     "websocket": "^1.0.34",
-    "winston": "^3.9.0"
+    "winston": "^3.9.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"

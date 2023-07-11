@@ -3,7 +3,8 @@ var router = express.Router()
 var path = require('path')
 require('dotenv').config()
 const fs = require('fs')
-const { getNewestList } = require('../fileControl')
+const { getNewestList, getConfigFile } = require('../fileControl')
+const logger = require('../logger')
 
 router.use(express.json())
 router.use(express.urlencoded({ extended: false }))
@@ -12,10 +13,12 @@ var addr = process.env.NODE_ENV == 'production' ? 'nstream.kr' : 'localhost'
 console.log(addr)
 /* GET home page. */
 router.get('/', function (req, res, next) {
+  logger.http('GET /')
   res.render('index', { title: 'Main Page' })
 })
 
 router.get('/notification', function (req, res) {
+  logger.http('GET /notification')
   res.render('notification', {
     title: 'Notification',
     port: process.env.PORT,
@@ -24,6 +27,8 @@ router.get('/notification', function (req, res) {
 })
 
 router.get('/board', function (req, res) {
+  logger.http('GET /board')
+
   res.render('board', {
     title: 'Board',
     port: process.env.PORT,
@@ -32,6 +37,8 @@ router.get('/board', function (req, res) {
 })
 
 router.get('/rank', function (req, res) {
+  logger.http('GET /rank')
+
   res.render('rank', {
     title: 'Rank',
     port: process.env.PORT,
@@ -40,55 +47,38 @@ router.get('/rank', function (req, res) {
 })
 
 router.get('/notification/setting', function (req, res) {
-  if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {
-    console.log(`please write file "notiConfig.json"`)
-  } else {
-    res.send(
-      JSON.parse(fs.readFileSync(path.join('config', 'notiConfig.json')))
-    )
-  }
+  // logger.http('GET /notification/setting')
+  res.send(getConfigFile())
 })
 
 router.post('/notification/setting', function (req, res) {
-  console.log(req.body)
+  logger.http('POST /notification/setting')
   if (req.body) {
-    if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {
-      console.log(`please write file "notiConfig.json"`)
-    } else {
-      let setting = JSON.parse(
-        fs.readFileSync(path.join('config', 'notiConfig.json'))
+    let setting = getConfigFile()
+    setting.BJID[req.body.bj][req.body.plusMinus].push(req.body.keyWord)
+    try {
+      fs.writeFileSync(
+        path.join('config', 'notiConfig.json'),
+        JSON.stringify(setting)
       )
-      console.log(setting.BJID)
-      setting.BJID[req.body.bj][req.body.plusMinus].push(req.body.keyWord)
-      try {
-        fs.writeFileSync(
-          path.join('config', 'notiConfig.json'),
-          JSON.stringify(setting)
-        )
-      } catch (error) {
-        console.log(error)
-      }
-      res.status(200)
-      res.json({ ok: true, data: req.body })
+    } catch (error) {
+      console.log(error)
     }
+    res.status(200)
+    res.json({ ok: true, data: req.body })
   }
 })
 
 router.delete('/notification/setting', function (req, res) {
+  logger.http('DELETE /notification/setting')
   if (req.body) {
-    if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {
-      console.log(`please write file "notiConfig.json"`)
-    } else {
-      let setting = JSON.parse(
-        fs.readFileSync(path.join('config', 'notiConfig.json'))
-      )
-      var data = req.body.data
+    let setting = getConfigFile()
+    var data = req.body.data
 
-      for (let i = 0; i < setting.BJID[data.bj][data.plusMinus].length; i++) {
-        if (setting.BJID[data.bj][data.plusMinus][i] === data.keyWord) {
-          setting.BJID[data.bj][data.plusMinus].splice(i, 1)
-          i--
-        }
+    for (let i = 0; i < setting.BJID[data.bj][data.plusMinus].length; i++) {
+      if (setting.BJID[data.bj][data.plusMinus][i] === data.keyWord) {
+        setting.BJID[data.bj][data.plusMinus].splice(i, 1)
+        i--
       }
 
       try {
@@ -97,7 +87,7 @@ router.delete('/notification/setting', function (req, res) {
           JSON.stringify(setting)
         )
       } catch (error) {
-        console.log(error)
+        logger.error(error)
       }
       res.status(200)
       res.json({ ok: true, data: data })
@@ -106,6 +96,7 @@ router.delete('/notification/setting', function (req, res) {
 })
 
 router.get('/board/data', function (req, res) {
+  // logger.http('GET /board/data')
   let scoreResult = {
     dal: { score: 0, contribute: 0, BJ: '달체솜' },
     yam: { score: 0, contribute: 0, BJ: '얌' },
@@ -154,16 +145,19 @@ router.get('/board/data', function (req, res) {
 })
 
 router.get('/board/img', function (req, res) {
+  // logger.http('GET /board/img')
   var files = fs.readdirSync('public/images/board')
   res.send(files)
 })
 
 router.get('/rank/img', function (req, res) {
+  // logger.http('GET /rank/data')
   var files = fs.readdirSync('public/images/rank')
   res.send(files)
 })
 
 router.get('/rank/data', function (req, res) {
+  // logger.http('GET /rank/data')
   let result = new Array()
   let donationScore = new Object({})
 
@@ -195,14 +189,8 @@ router.get('/rank/data', function (req, res) {
     result[i].rank = ++i
   }
 
-  if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {
-    console.log(`please write file "notiConfig.json"`)
-  } else {
-    let setting = JSON.parse(
-      fs.readFileSync(path.join('config', 'notiConfig.json'))
-    )
-    res.json({ result: result, limit: setting.RANK_LIMIT })
-  }
+  let setting = getConfigFile()
+  res.json({ result: result, limit: setting.RANK_LIMIT })
 })
 
 module.exports = router

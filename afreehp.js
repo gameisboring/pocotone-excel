@@ -6,7 +6,8 @@ const requestPromise = util.promisify(request)
 const fs = require('fs')
 var path = require('path')
 const { dateFormat } = require('./time')
-const { getNewestList } = require('./fileControl')
+const { getNewestList, getConfigFile } = require('./fileControl')
+const logger = require('./logger')
 
 module.exports = async (server) => {
   const SocketIO = require('socket.io')(server, { path: '/socket.io' })
@@ -19,8 +20,8 @@ module.exports = async (server) => {
   //////////////////////////////////////////////////////////////////
   /// afreehp
   //////////////////////////////////////////////////////////////////
-  console.log('==============================================')
-  console.log('Initialize afreehp')
+  logger.info('==============================================')
+  logger.info('Initialize afreehp')
 
   async function connect_afreehp() {
     require('./fileControl').makeListFile()
@@ -49,15 +50,7 @@ module.exports = async (server) => {
     })
 
     socketAfreehp.on('cmd', async function (data) {
-      var config = ''
-
-      if (!fs.existsSync(path.join('config', 'notiConfig.json'))) {
-        console.log(`please write file "APIconfig.json"`)
-      } else {
-        config = JSON.parse(
-          fs.readFileSync(path.join('config', 'notiConfig.json'))
-        )
-      }
+      var config = getConfigFile()
 
       try {
         if (
@@ -76,7 +69,7 @@ module.exports = async (server) => {
 
           var soundUrl = await getSoundSrc(config.BJSOUND, data.data.value, BJ)
           if (data.data.broad == 'afreeca' && type == 'star') {
-            console.log(
+            logger.info(
               `New Donation | 타입: ${type}, 시청자 ID:${id}, 시청자 이름:${name}, 개수:${val}, 메세지:${
                 data.data.msg
               }, 후원 BJ:${BJ ? BJ : '없음'}, 점수변동:${
@@ -107,20 +100,20 @@ module.exports = async (server) => {
           }
         }
       } catch (e) {
-        console.error('Afreehp message parse error: ', e.toString())
+        logger.error('Afreehp message parse error: ', e.toString())
       }
     })
 
     socketAfreehp.on('error', function () {
-      console.error('Afreehp error')
+      logger.error('Afreehp error')
     })
 
     socketAfreehp.on('close', function () {
-      console.log('Afreehp close')
+      logger.info('Afreehp close')
     })
     socketAfreehp.on('connect_error', function (err) {
-      console.error('Afreehp connect_error')
-      console.error(err)
+      logger.error('Afreehp connect_error')
+      logger.error(err)
     })
 
     setTimeout(function () {
@@ -132,27 +125,26 @@ module.exports = async (server) => {
     socket.emit('afreecaHpUrl', settings.afreehp.alertbox_url)
 
     socket.on('reply', (msg) => {
-      console.log(msg)
+      logger.info(msg)
     })
     socket.on('stop', (msg) => {
-      console.log(msg)
+      logger.info(msg)
       SocketIO.emit('stop', 'stop button click')
     })
 
     socket.on('resume', (msg) => {
-      console.log(msg)
+      logger.info(msg)
       SocketIO.emit('resume', 'resume button click')
     })
 
     socket.on('urlSetting', async (msg) => {
-      console.log('urlSetting : afreeca helper url : ', msg)
+      logger.info('urlSetting : afreeca helper url : ', msg)
       /* {"afreehp":{"use":true,"alertbox_url":"http://afreehp.kr/page/VZWWnKaZx8bYmqSVwJY"}} */
       var newSetting = JSON.parse(
         fs.readFileSync(path.join('config', 'settings.json'))
       )
       newSetting.afreehp.alertbox_url = msg
       delete newSetting.afreehp.idx
-      console.log(newSetting)
       newSetting = await checkAfreeHpIdx(newSetting)
       if (typeof newSetting == 'object') {
         fs.writeFileSync(
@@ -166,7 +158,7 @@ module.exports = async (server) => {
     })
 
     socket.on('restart', async (msg) => {
-      console.log(msg)
+      logger.info(msg)
       process.exit(1)
     })
   })
@@ -207,7 +199,6 @@ module.exports = async (server) => {
         if (a[2] < b[2]) return 1
         return 0
       })
-
       filteredBjImgUrl.sort(function (a, b) {
         if (a[2] > b[2]) return -1
         if (a[2] < b[2]) return 1
@@ -249,19 +240,19 @@ module.exports = async (server) => {
         var matched_res = response.body.match(/idx:\s*"([a-zA-Z0-9]+)",/)
         if (matched_res !== null && matched_res.length > 1) {
           settings.afreehp.idx = matched_res[1]
-          console.log(`Get afreehp.idx succeed : ${settings.afreehp.idx}\n`)
+          logger.info(`Get afreehp.idx succeed : ${settings.afreehp.idx}\n`)
         } else {
-          console.error('Get afreehp.idx parse failed.\n')
+          logger.error('Get afreehp.idx parse failed.\n')
         }
       } else {
-        console.error('Get afreehp.idx failed.\n')
+        logger.error('Get afreehp.idx failed.\n')
       }
     } catch (e) {
-      console.error('Error afreehp.idx parse: ' + e.toString())
+      logger.error('Error afreehp.idx parse: ' + e.toString())
     }
 
     if (settings.afreehp.idx === undefined) {
-      console.log('Can not find afreehp idx')
+      logger.log('Can not find afreehp idx')
       return
     }
 

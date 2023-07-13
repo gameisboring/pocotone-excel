@@ -89,9 +89,8 @@ router.delete('/notification/setting', function (req, res) {
       } catch (error) {
         logger.error(error)
       }
-      res.status(200)
-      res.json({ ok: true, data: data })
     }
+    res.json({ ok: true, data: data })
   }
 })
 

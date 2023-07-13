@@ -9,9 +9,9 @@ var body = document.querySelector('#main .body')
 fetchInterval = setInterval(renderListVar, 5000)
 
 function addListBar(data) {
-  var barImageFileName
   var rank = data.rank
-  if (rank == 1) {
+  var barImageFileName = typeof rank == 'number' ? 'normal' : ''
+  /*   if (rank == 1) {
     barImageFileName = 1
   } else if (rank == 2) {
     barImageFileName = 2
@@ -21,7 +21,7 @@ function addListBar(data) {
     barImageFileName = 'low'
   } else {
     barImageFileName = 'normal'
-  }
+  } */
 
   var el = `<div class="bar">
   <img src="images/rank/listbar_${barImageFileName}.png" alt="" />

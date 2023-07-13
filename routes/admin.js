@@ -13,6 +13,9 @@ router.use(express.urlencoded({ extended: false }))
 
 var addr = process.env.NODE_ENV == 'production' ? 'nstream.kr' : 'localhost'
 
+/**
+ * 알림 사운드 수정
+ */
 const SoundStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     if (req.body.bj == 'default') {
@@ -31,6 +34,9 @@ const SoundStorage = multer.diskStorage({
   },
 })
 
+/**
+ * 알림 이미지 수정
+ */
 const ImageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.normalize('public/images'))
@@ -45,6 +51,9 @@ const ImageStorage = multer.diskStorage({
   },
 })
 
+/**
+ * 스코어보드 이미지 수정
+ */
 const BoardImageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join('public/images/', req.body.category))
@@ -60,6 +69,9 @@ const BoardImageStorage = multer.diskStorage({
   },
 })
 
+/**
+ * 랭킹 이미지 수정
+ */
 const RankImageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.normalize('public/images/rank'))
@@ -216,7 +228,7 @@ router.post('/board/opacity', function (req, res) {
 
 router.post('/rank/opacity', function (req, res) {
   logger.http('POST /admin/rank/opacity')
-  let setting = getConfigFile
+  let setting = getConfigFile()
 
   setting.RANK_OP = req.body.opacity
 

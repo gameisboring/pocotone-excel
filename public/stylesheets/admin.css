@@ -1,3 +1,24 @@
+@font-face {
+  font-family: 'ChosunLo';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunLo.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NanumSquareNeo-Heavy';
+  src: url('../font/NanumSquareNeoTTF-eHv.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'NanumSquareNeo-Bold';
+  src: url('../font/NanumSquareNeoTTF-cBd.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
 #condition input[type='number'] {
   width: 70px;
   font-size: 12px;
@@ -18,7 +39,7 @@
 }
 
 .imageBtn {
-  width: 300px;
+  width: 400px;
 }
 
 .imageBtn .centerd {
@@ -39,5 +60,308 @@
 
 #boardSettingImages img,
 #rankingSettingImages img {
+  width: 400px;
+}
+
+#conditionConfigSaveBtn {
+  position: fixed;
+  bottom: 50px;
+  right: 100px;
   width: 300px;
+  font-size: 30px;
+  border-radius: 19px;
+}
+
+.row {
+  --bs-gutter-x: 0;
+}
+
+#BoardMain {
+  /* width: 400px; */
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent;
+}
+#BoardMain img {
+  width: 100%;
+}
+
+#BoardMain .bar {
+  /* margin-left: 1px; */
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-weight: 700;
+  background-image: url('/images/board/listbar_normal.png');
+  /* padding-left: 10px;
+  padding-right: 10px; */
+  display: flex;
+  flex-direction: column;
+}
+
+#BoardMain .bar img {
+  /* height: 30px; */
+  width: 100%;
+  display: block;
+  padding: 0;
+  filter: none;
+  border: 0;
+  border-radius: 0;
+}
+
+#BoardMain .bar .barText {
+  padding: 0 0 0 18px;
+  display: block;
+  color: #000000;
+  font-size: 20px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  /* line-height: 30px; */
+}
+
+#BoardMain .body {
+  width: 100%;
+}
+
+#BoardMain .bar .barText.top span {
+  font-size: 16px !important;
+}
+
+.white {
+  color: white;
+}
+
+.black {
+  color: black;
+}
+
+#BoardMain .bar .barText.menu {
+  display: flex;
+  bottom: 27px;
+  padding: 0;
+  text-align: center;
+  align-items: center;
+  /* line-height: 26px; */
+}
+
+#BoardMain .bar .barText.menu span {
+  flex-basis: 0;
+}
+
+#BoardMain .bar .barText .rank {
+  flex-grow: 0.7;
+  font-family: 'ChosunLo';
+  font-size: 25px;
+}
+
+#BoardMain .bar .barText .bj {
+  flex-grow: 2;
+  font-family: 'NanumSquareNeo-Heavy';
+  font-weight: 900;
+}
+
+#BoardMain .bar .barText .score {
+  font-family: 'NanumSquareNeo-Heavy';
+  font-weight: 900;
+  flex-grow: 1;
+}
+
+#BoardMain .bar .barText .contribute {
+  flex-grow: 1.8;
+  font-family: 'NanumSquareNeo-Heavy';
+  font-weight: 900;
+}
+
+#RankMain {
+  height: auto;
+  margin: auto;
+  padding: auto;
+  display: flex;
+  flex-direction: column;
+
+  background-color: transparent;
+}
+
+#RankMain .bar {
+  background-image: url('/images/rank/listbar_normal.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+}
+
+#RankMain .bar img {
+  width: 100%;
+  display: block;
+  padding: 0;
+  filter: none;
+  border: 0;
+  border-radius: 0;
+}
+
+#RankMain .bar .barText {
+  padding: 0 0 0 18px;
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  color: #000000;
+}
+
+#RankMain .body {
+  width: 100%;
+}
+
+#RankMain .bar .barText.top span {
+  font-size: 16px !important;
+}
+
+#RankMain .white {
+  color: white;
+}
+
+#RankMain .black {
+  color: black;
+}
+
+#RankMain .bar .barText.menu {
+  display: flex;
+  padding: 0;
+  text-align: center;
+  align-items: center;
+}
+
+#RankMain .bar .barText.menu span {
+  flex-basis: 0;
+}
+
+#RankMain .bar .barText .rank {
+  flex-grow: 0.5;
+  font-family: 'ChosunLo';
+  font-size: 25px;
+}
+
+#RankMain .bar .barText .donator {
+  flex-grow: 2.5;
+  font-family: 'NanumSquareNeo-Heavy';
+  font-weight: 900;
+}
+
+#RankMain .bar .barText .score {
+  flex-grow: 1;
+  font-family: 'NanumSquareNeo-Heavy';
+  font-weight: 900;
+}
+
+#RankMain .bar .barText .contribute {
+  flex-grow: 1.8;
+  font-family: 'NanumSquareNeo-Bold';
+  font-weight: 800;
+}
+
+.footer {
+  height: auto;
+  width: auto;
+  display: block;
+}
+
+input[type='range'] {
+  height: 36px;
+  -webkit-appearance: none;
+  margin: 10px 0;
+  width: 100%;
+}
+input[type='range']:focus {
+  outline: none;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 0px #000000;
+  background: #2497e3;
+  border-radius: 1px;
+  border: 0px solid #000000;
+}
+input[type='range']::-webkit-slider-thumb {
+  box-shadow: 0px 0px 0px #000000;
+  border: 1px solid #2497e3;
+  height: 29px;
+  width: 18px;
+  border-radius: 25px;
+  background: #a1d0ff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -12.5px;
+}
+input[type='range']:focus::-webkit-slider-runnable-track {
+  background: #2497e3;
+}
+input[type='range']::-moz-range-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 0px #000000;
+  background: #2497e3;
+  border-radius: 1px;
+  border: 0px solid #000000;
+}
+input[type='range']::-moz-range-thumb {
+  box-shadow: 0px 0px 0px #000000;
+  border: 1px solid #2497e3;
+  height: 29px;
+  width: 18px;
+  border-radius: 25px;
+  background: #a1d0ff;
+  cursor: pointer;
+}
+input[type='range']::-ms-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type='range']::-ms-fill-lower {
+  background: #2497e3;
+  border: 0px solid #000000;
+  border-radius: 2px;
+  box-shadow: 0px 0px 0px #000000;
+}
+input[type='range']::-ms-fill-upper {
+  background: #2497e3;
+  border: 0px solid #000000;
+  border-radius: 2px;
+  box-shadow: 0px 0px 0px #000000;
+}
+input[type='range']::-ms-thumb {
+  margin-top: 1px;
+  box-shadow: 0px 0px 0px #000000;
+  border: 1px solid #2497e3;
+  height: 29px;
+  width: 18px;
+  border-radius: 25px;
+  background: #a1d0ff;
+  cursor: pointer;
+}
+input[type='range']:focus::-ms-fill-lower {
+  background: #2497e3;
+}
+input[type='range']:focus::-ms-fill-upper {
+  background: #2497e3;
+}
+.tooltip-arrow,
+.white-tooltip + .tooltip > .tooltip-inner {
+  color: #ffffff !important;
+}
+
+.pointer:hover {
+  cursor: pointer;
 }

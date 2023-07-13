@@ -1,8 +1,26 @@
+var tooltipTriggerList = [].slice.call(
+  document.querySelectorAll('[data-bs-toggle="tooltip"]')
+)
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
+
 document.addEventListener('DOMContentLoaded', async function () {
   renderNowKeyWord()
   renderConditions()
   renderBoardSetting()
   renderRankSetting()
+
+  await fetch('/notiConfig.json')
+    .then((response) => response.json())
+    .then(async (data) => {
+      document.getElementById('boardOpacity').value = data.BOARD_OP
+      document.getElementById('boardOpacitySpan').innerText =
+        data.BOARD_OP + '%'
+
+      document.getElementById('rankOpacity').value = data.RANK_OP
+      document.getElementById('rankOpacitySpan').innerText = data.RANK_OP + '%'
+    })
 })
 socket.on('afreecaHpUrl', async (msg) => {
   document.querySelector('#afreecaHpUrl').innerText = msg
@@ -138,8 +156,8 @@ document
   })
 
 document
-  .querySelector('#keyWordSaveBtn')
-  .addEventListener('click', async (e) => {
+  .querySelector('#keyWordSaveForm')
+  .addEventListener('submit', async (e) => {
     e.preventDefault()
     var bj = $('input:radio[name=selBJ]:checked').val()
     var plusMinus = $('input:radio[name=plusMinus]:checked').val()
@@ -170,6 +188,15 @@ document
     $('input:radio[name=plusMinus]').prop('checked', false)
     $('#keyWordInput').val('')
   })
+
+document.getElementById('boardOpacity').addEventListener('input', (e) => {
+  ShowSliderValue(e.target.value, 'boardOpacitySpan')
+  document.getElementById('BoardMain').style.opacity = e.target.value + '%'
+})
+document.getElementById('rankOpacity').addEventListener('input', (e) => {
+  ShowSliderValue(e.target.value, 'rankOpacitySpan')
+  document.getElementById('RankMain').style.opacity = e.target.value + '%'
+})
 
 function deleteBtnClick(event) {
   event.preventDefault()
@@ -344,7 +371,7 @@ function renderConditionBar(bj, num, data) {
                 <span id="${bj}-${num}-sound-filename">${
     data ? data.FILE : ''
   }</span>
-                <label class="btn btn-primary rounded" for="${bj}-${num}-sound">
+                <label class="btn btn-light rounded" for="${bj}-${num}-sound">
                   파일 변경
                 </label>
               </div>`
@@ -365,9 +392,37 @@ function renderConditionBar(bj, num, data) {
 }
 
 function renderKeyWord(mode, arr, BJ) {
-  var querySel = `#keywordPresent .${BJ} .${mode}`
-  document.querySelector(querySel).innerHTML =
-    mode == 'plus' ? '플러스' : '마이너스'
+  var querySel = `#keywordPresent2 tbody`
+  arr.forEach((element) => {
+    const newTr = document.createElement('tr')
+    const bjTd = document.createElement('th')
+    const plusMinusTd = document.createElement('td')
+    const keyWordTd = document.createElement('td')
+
+    bjTd.scope = 'row'
+    bjTd.innerText = bjName(BJ)
+    plusMinusTd.innerText = mode == 'plus' ? '플러스' : '마이너스'
+    keyWordTd.innerText = element
+
+    newTr.append(bjTd)
+    newTr.append(plusMinusTd)
+    newTr.append(keyWordTd)
+    newTr.classList.add(
+      mode == 'plus' ? 'table-primary' : 'table-danger',
+      'pointer'
+    )
+
+    newTr.setAttribute('data-word', element)
+    newTr.setAttribute('data-bj', BJ)
+    newTr.setAttribute('data-plusMinus', mode)
+    newTr.addEventListener('click', deleteBtnClick)
+
+    document.querySelector(querySel).appendChild(newTr)
+  })
+}
+
+/* function renderKeyWord(mode, arr, BJ) {
+  var querySel = `#keywordPresent .${BJ}  .${mode}`
   arr.forEach((element) => {
     var newBtn = document.createElement('Button')
     newBtn.innerText = element
@@ -379,7 +434,7 @@ function renderKeyWord(mode, arr, BJ) {
 
     document.querySelector(querySel).appendChild(newBtn)
   })
-}
+} */
 
 async function soundFileUpload(target, bj, num) {
   console.log(target.files[0])
@@ -436,19 +491,12 @@ function addAddBtn(bj) {
   const addCondition = document.createElement('button')
   addCondition.innerText = '조건 추가'
   addCondition.setAttribute('data-bj', bj)
-  addCondition.classList.add(
-    'w-50',
-    'mx-auto',
-    'btn',
-    'btn-secondary',
-    'rounded'
-  )
+  addCondition.classList.add('w-50', 'mx-auto', 'btn', 'btn-light', 'rounded')
   addCondition.addEventListener('click', (e) => {
     e.preventDefault()
     const bj = e.target.getAttribute('data-bj')
     const num =
       document.querySelectorAll(`#${bj}-conditions .conditionBar`).length + 1
-
     renderConditionBar(bj, num)
   })
   document.querySelector(`#${bj}-conditions`).appendChild(addCondition)
@@ -466,11 +514,14 @@ function renderBoardSetting() {
         div.setAttribute('id', `board-${image}`)
         div.setAttribute('data-cat', `board`)
         div.setAttribute('data-filename', image)
-        var span = document.createElement('div')
-        span.innerText = image
+
+        /* var span = document.createElement('div')
+        span.innerText = image */
+
         var img = document.createElement('img')
         img.src = `images/board/${image}`
         img.id = `board-img-${image}`
+
         var file = document.createElement('input')
         file.type = 'file'
         file.setAttribute('id', `board-file-${image}`)
@@ -486,13 +537,26 @@ function renderBoardSetting() {
           }
           boardImgFileUpload(data)
         })
+
         var label = document.createElement('label')
         label.setAttribute('for', `board-file-${image}`)
-        label.classList.add('btn', 'btn-primary')
+        label.classList.add(
+          'btn',
+          'btn-primary',
+          'd-flex',
+          'p-0',
+          'w-50',
+          'justify-content-center',
+          'align-items-center',
+          'fs-5',
+          'rounded'
+        )
         label.innerText = '변경'
+
         var innerDiv = document.createElement('div')
-        innerDiv.classList.add('d-flex', 'justify-content-between')
-        div.appendChild(span)
+        innerDiv.classList.add('d-flex', 'justify-content-between', 'gap-4')
+
+        // div.appendChild(span)
         innerDiv.appendChild(img)
         innerDiv.appendChild(label)
         div.appendChild(innerDiv)
@@ -514,11 +578,14 @@ function renderRankSetting() {
         div.setAttribute('id', `rank-${image}`)
         div.setAttribute('data-cat', `rank`)
         div.setAttribute('data-filename', image)
-        var span = document.createElement('div')
-        span.innerText = image
+
+        /* var span = document.createElement('div')
+        span.innerText = image */
+
         var img = document.createElement('img')
         img.src = `images/rank/${image}`
         img.id = `rank-img-${image}`
+
         var file = document.createElement('input')
         file.type = 'file'
         file.setAttribute('id', `rank-file-${image}`)
@@ -532,15 +599,28 @@ function renderRankSetting() {
             category: e.target.getAttribute('data-cat'),
             file: e.target.files[0],
           }
-          rankImgFileUpload(data)
+          boardImgFileUpload(data)
         })
+
         var label = document.createElement('label')
         label.setAttribute('for', `rank-file-${image}`)
-        label.classList.add('btn', 'btn-primary')
-        label.innerText = '변경'
+        label.classList.add(
+          'btn',
+          'btn-primary',
+          'd-flex',
+          'p-0',
+          'w-50',
+          'justify-content-center',
+          'align-items-center',
+          'fs-5',
+          'rounded'
+        )
+        label.innerText = '변  경'
+
         var innerDiv = document.createElement('div')
-        innerDiv.classList.add('d-flex', 'justify-content-between')
-        div.appendChild(span)
+        innerDiv.classList.add('d-flex', 'justify-content-start', 'gap-4')
+
+        // div.appendChild(span)
         innerDiv.appendChild(img)
         innerDiv.appendChild(label)
         div.appendChild(innerDiv)
@@ -550,26 +630,6 @@ function renderRankSetting() {
     })
 }
 
-function rankImgFileUpload(data) {
-  console.log(data)
-
-  let formData = new FormData()
-  formData.append('category', data.category)
-  formData.append('fileName', data.fileName)
-  formData.append('file', data.file)
-
-  fetch('admin/rank/image', {
-    method: 'POST',
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((response) => {
-      alert('성공적으로 저장되었습니다')
-      console.log(response)
-      var img = document.getElementById(`rank-img-${data.fileName}`)
-      img.src = `images/${data.category}/${data.fileName}`
-    })
-}
 function boardImgFileUpload(data) {
   console.log(data)
 
@@ -657,3 +717,36 @@ document
         })
     }
   })
+
+document.getElementById('navBoardBtn').addEventListener('click', navBtnClickFn)
+document.getElementById('navNotiBtn').addEventListener('click', navBtnClickFn)
+document.getElementById('navDataBtn').addEventListener('click', navBtnClickFn)
+
+function navBtnClickFn(e) {
+  e.preventDefault()
+  const targetId = e.target.getAttribute('data-field')
+  document.querySelectorAll('#main > div').forEach((col) => {
+    if (col.id == targetId) {
+      document.getElementById(col.id).classList.remove('d-none')
+    } else {
+      document.getElementById(col.id).classList.add('d-none')
+    }
+  })
+}
+
+function ShowSliderValue(val, id) {
+  var opValueView = document.getElementById(id)
+  opValueView.innerHTML = val + '%'
+}
+
+function bjName(bjid) {
+  if (bjid == 'ori') {
+    return '오리꿍'
+  } else if (bjid == 'dal') {
+    return '달체솜'
+  } else if (bjid == 'hiyoko') {
+    return '히요코'
+  } else if (bjid == 'yam') {
+    return '얌'
+  }
+}

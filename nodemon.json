@@ -1,4 +1,4 @@
 {
-  "ignore": ["list/", "public/"],
+  "ignore": ["list/", "public/", "config/"],
   "watch": ["afreehp", "app", "/bin/www"]
 }

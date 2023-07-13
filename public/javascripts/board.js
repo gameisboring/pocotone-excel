@@ -25,9 +25,9 @@ socket.on('disconnect', (reason) => {})
 socket.on('connection', (reason) => {})
 
 function addListBar(data) {
-  var barImageFileName
   var rank = data.rank
-  if (rank == 1) {
+  var barImageFileName = 'normal'
+  /* if (rank == 1) {
     barImageFileName = 1
   } else if (rank == 2) {
     barImageFileName = 2
@@ -37,7 +37,11 @@ function addListBar(data) {
     barImageFileName = 'low'
   } else {
     barImageFileName = 'normal'
-  }
+  } */
+
+  const bar = document.createElement('div')
+
+  const barTextMenu = document.createElement('div')
 
   var el = `<div class="bar">
   <img src="images/board/listbar_${barImageFileName}.png" alt="" />

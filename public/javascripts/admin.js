@@ -106,7 +106,9 @@ document
   .addEventListener('click', (e) => {
     e.preventDefault()
     var sendObj = { ori: {}, yam: {}, hiyoko: {}, dal: {} }
-    const conditionBars = document.querySelectorAll('#condition .conditionBar')
+    const conditionBars = document.querySelectorAll(
+      '#conditionMain .conditionBar'
+    )
 
     conditionBars.forEach((conditionBar) => {
       const bj = conditionBar.getAttribute('data-bj')
@@ -149,7 +151,9 @@ document
     })
       .then((response) => response.json())
       .then((response) => {
-        console.log(response)
+        if (response.ok) {
+          Swal.fire('성공적으로 저장되었습니다')
+        }
       })
 
     console.log(sendObj)
@@ -198,14 +202,30 @@ document.getElementById('rankOpacity').addEventListener('input', (e) => {
   document.getElementById('RankMain').style.opacity = e.target.value + '%'
 })
 
+document.querySelectorAll('.urlBox').forEach((list) => {
+  list.addEventListener('click', (e) => {
+    e.preventDefault()
+    console.log(e.target)
+  })
+})
+
 function deleteBtnClick(event) {
   event.preventDefault()
+
+  var tr
+  if (event.target.tagName != 'td') {
+    tr = event.target.parentNode
+  } else if (event.target.tagName != 'tr') {
+    tr = event.target
+  }
+
   var data = {
-    keyWord: event.target.getAttribute('data-word'),
-    bj: event.target.getAttribute('data-bj'),
-    plusMinus: event.target.getAttribute('data-plusMinus'),
+    keyWord: tr.getAttribute('data-word'),
+    bj: tr.getAttribute('data-bj'),
+    plusMinus: tr.getAttribute('data-plusMinus'),
   }
   if (confirm('삭제하시겠습니까?')) {
+    console.log(data)
     fetch('notification/setting', {
       method: 'DELETE',
       headers: {
@@ -218,15 +238,13 @@ function deleteBtnClick(event) {
       .then((response) => response.json())
       .then((response) => {
         if (response.ok) {
-          alert('성공적으로 저장되었습니다')
+          alert('성공적으로 삭제되었습니다')
           renderNowKeyWord()
         } else {
           alert('저장에 실패했습니다')
         }
       })
-  } else {
   }
-  console.log(data)
 }
 
 document.querySelector('#stopBtn').addEventListener('click', (e) => {
@@ -247,11 +265,11 @@ async function renderNowKeyWord() {
     .then((response) => response.json())
     .then(async (data) => {
       var BJs = Object.keys(data.BJID)
+      document.querySelector('#keywordPresent tbody').replaceChildren()
       for (i in BJs) {
         renderKeyWord('plus', data.BJID[BJs[i]].plus, BJs[i])
         renderKeyWord('minus', data.BJID[BJs[i]].minus, BJs[i])
       }
-      document.querySelector('#keywordPresent')
     })
 }
 
@@ -350,7 +368,7 @@ function renderConditionBar(bj, num, data) {
   conditionBar.setAttribute('data-number', num)
   conditionBar.setAttribute('data-bj', bj)
 
-  var html = `<div>
+  var html = `<div class=''>
                 <input
                   type="number"
                   data-bj="${bj}"
@@ -392,25 +410,25 @@ function renderConditionBar(bj, num, data) {
 }
 
 function renderKeyWord(mode, arr, BJ) {
-  var querySel = `#keywordPresent2 tbody`
+  var querySel = `#keywordPresent tbody`
   arr.forEach((element) => {
     const newTr = document.createElement('tr')
-    const bjTd = document.createElement('th')
+    const bjTd = document.createElement('td')
     const plusMinusTd = document.createElement('td')
     const keyWordTd = document.createElement('td')
 
     bjTd.scope = 'row'
     bjTd.innerText = bjName(BJ)
     plusMinusTd.innerText = mode == 'plus' ? '플러스' : '마이너스'
+    plusMinusTd.classList.add(
+      mode == 'plus' ? 'border-success' : 'border-danger'
+    )
     keyWordTd.innerText = element
 
     newTr.append(bjTd)
     newTr.append(plusMinusTd)
     newTr.append(keyWordTd)
-    newTr.classList.add(
-      mode == 'plus' ? 'table-primary' : 'table-danger',
-      'pointer'
-    )
+    newTr.classList.add('pointer', 'table-active')
 
     newTr.setAttribute('data-word', element)
     newTr.setAttribute('data-bj', BJ)
@@ -491,7 +509,13 @@ function addAddBtn(bj) {
   const addCondition = document.createElement('button')
   addCondition.innerText = '조건 추가'
   addCondition.setAttribute('data-bj', bj)
-  addCondition.classList.add('w-50', 'mx-auto', 'btn', 'btn-light', 'rounded')
+  addCondition.classList.add(
+    'w-50',
+    'mx-auto',
+    'btn',
+    'btn-secondary',
+    'rounded'
+  )
   addCondition.addEventListener('click', (e) => {
     e.preventDefault()
     const bj = e.target.getAttribute('data-bj')
@@ -528,7 +552,7 @@ function renderBoardSetting() {
         file.setAttribute('data-cat', `board`)
         file.setAttribute('data-filename', image)
         file.classList.add('d-none')
-        file.addEventListener('change', (e) => {
+        file.addEventListener('input', (e) => {
           e.preventDefault()
           var data = {
             fileName: e.target.getAttribute('data-filename'),
@@ -592,7 +616,7 @@ function renderRankSetting() {
         file.setAttribute('data-cat', `rank`)
         file.setAttribute('data-filename', image)
         file.classList.add('d-none')
-        file.addEventListener('change', (e) => {
+        file.addEventListener('input', (e) => {
           e.preventDefault()
           var data = {
             fileName: e.target.getAttribute('data-filename'),
@@ -633,22 +657,27 @@ function renderRankSetting() {
 function boardImgFileUpload(data) {
   console.log(data)
 
-  let formData = new FormData()
-  formData.append('category', data.category)
-  formData.append('fileName', data.fileName)
-  formData.append('file', data.file)
+  if (confirm('파일을 변경하시겠습니까? 기존 파일은 삭제됩니다')) {
+    let formData = new FormData()
+    formData.append('category', data.category)
+    formData.append('fileName', data.fileName)
+    formData.append('file', data.file)
 
-  fetch(`admin/${data.category}/image`, {
-    method: 'POST',
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((response) => {
-      alert('성공적으로 저장되었습니다')
-      console.log(response)
-      var img = document.getElementById(`board-img-${data.fileName}`)
-      img.src = `images/${data.category}/${data.fileName}`
+    fetch(`admin/${data.category}/image`, {
+      method: 'POST',
+      body: formData,
     })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response)
+        if (response.ok) {
+          alert('성공적으로 저장되었습니다')
+          location.replace(location.href)
+          /* var img = document.getElementById(`board-img-${data.fileName}`)
+          img.src = `images/${data.category}/${data.fileName}` */
+        }
+      })
+  }
 }
 
 document.querySelector('#boardSettingForm').addEventListener('submit', (e) => {

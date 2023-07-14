@@ -4758,7 +4758,7 @@ fieldset:disabled .btn {
   --bs-accordion-body-padding-x: 1.25rem;
   --bs-accordion-body-padding-y: 1rem;
   --bs-accordion-active-color: var(--bs-primary-text-emphasis);
-  --bs-accordion-active-bg: var(--bs-primary-bg-subtle);
+  --bs-accordion-active-bg: var(--bs-primary-border-subtle);
 }
 
 .accordion-button {
@@ -5977,7 +5977,7 @@ fieldset:disabled .btn {
   --bs-tooltip-margin: ;
   --bs-tooltip-font-size: 0.875rem;
   --bs-tooltip-color: #ffffff;
-  --bs-tooltip-bg: var(--bs-body-bg);
+  --bs-tooltip-bg: var(--bs-light);
   --bs-tooltip-border-radius: var(--bs-border-radius);
   --bs-tooltip-opacity: 1;
   --bs-tooltip-arrow-width: 0.8rem;
@@ -5995,7 +5995,7 @@ fieldset:disabled .btn {
   text-shadow: none;
   text-transform: none;
   letter-spacing: normal;
-  word-break: normal;
+  word-break: keep-all;
   white-space: normal;
   word-spacing: normal;
   line-break: auto;
@@ -6077,8 +6077,9 @@ fieldset:disabled .btn {
 .tooltip-inner {
   max-width: var(--bs-tooltip-max-width);
   padding: var(--bs-tooltip-padding-y) var(--bs-tooltip-padding-x);
-  color: #ffffff;
+  color: var(--bs-tooltip-color);
   text-align: center;
+
   background-color: var(--bs-tooltip-bg);
   border-radius: var(--bs-tooltip-border-radius);
 }

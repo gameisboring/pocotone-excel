@@ -18,6 +18,10 @@
   font-weight: bold;
   font-style: normal;
 }
+body {
+  min-height: 75rem;
+  padding-top: 4.5rem;
+}
 
 #condition input[type='number'] {
   width: 70px;
@@ -43,6 +47,7 @@
 }
 
 .imageBtn .centerd {
+  word-break: keep-all;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -85,6 +90,12 @@
 }
 #BoardMain img {
   width: 100%;
+}
+#BoardMain .header {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url('/images/board/header.png');
+  display: flex;
 }
 
 #BoardMain .bar {
@@ -175,8 +186,6 @@
 
 #RankMain {
   height: auto;
-  margin: auto;
-  padding: auto;
   display: flex;
   flex-direction: column;
 
@@ -204,7 +213,7 @@
 #RankMain .bar .barText {
   padding: 0 0 0 18px;
   display: block;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 500;
   font-style: normal;
   font-stretch: normal;

@@ -205,7 +205,14 @@ document.getElementById('rankOpacity').addEventListener('input', (e) => {
 document.querySelectorAll('.urlBox').forEach((list) => {
   list.addEventListener('click', (e) => {
     e.preventDefault()
-    console.log(e.target)
+
+    // writeText()의 인자로 넣은 텍스트가 복사된다.
+    window.navigator.clipboard
+      .writeText(list.getAttribute('data-url'))
+      .then(() => {
+        // 복사가 완료되면 이 부분이 호출된다.
+        alert('복사 완료!')
+      })
   })
 })
 

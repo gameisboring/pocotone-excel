@@ -18,9 +18,56 @@
   font-weight: bold;
   font-style: normal;
 }
+
+body {
+  font-family: 'NanumSquareNeo-Bold';
+}
+
+.colored-toast.swal2-icon-success {
+  background-color: #a5dc86 !important;
+}
+
+.colored-toast.swal2-icon-error {
+  background-color: #f27474 !important;
+}
+
+.colored-toast.swal2-icon-warning {
+  background-color: #f8bb86 !important;
+}
+
+.colored-toast.swal2-icon-info {
+  background-color: #3fc3ee !important;
+}
+
+.colored-toast.swal2-icon-question {
+  background-color: #87adbd !important;
+}
+
+.colored-toast .swal2-title {
+  color: black;
+}
+
+.colored-toast .swal2-close {
+  color: white;
+}
+
+.colored-toast .swal2-html-container {
+  color: white;
+}
+
 body {
   min-height: 75rem;
   padding-top: 4.5rem;
+}
+
+.fixed-table {
+  table-layout: fixed;
+}
+
+.donation-msg {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #condition input[type='number'] {

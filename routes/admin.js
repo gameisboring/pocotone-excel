@@ -279,32 +279,44 @@ router.post('/script', function (req, res) {
   res.send({ ok: true })
 })
 
+router.get('/newlog', function (req, res) {
+  let logList = JSON.parse(
+    fs.readFileSync(
+      path.join('list', `${getNewestList('_list.json')}`),
+      'utf-8'
+    )
+  )
+  res.send(logList)
+})
+
 router.post('/newlog', function (req, res) {
   logger.http('POST /admin/newlog')
-  let orderedList = JSON.parse(
+  let logList = JSON.parse(
     fs.readFileSync(
       path.join('list', `${getNewestList('_list.json')}`),
       'utf-8'
     )
   )
 
-  const order = new Object({
+  const newLog = new Object({
     isTest: false,
     createAt: dateFormat(new Date()),
     type: 'star',
     id: 'ADMIN',
     name: req.body.name,
-    bj: req.body.bj,
+    bj: req.body.bj ? req.body.bj : '',
     msg: req.body.msg,
-    plusMinus: req.body.plusMinus,
+    plusMinus: req.body.plusMinus ? req.body.plusMinus : '',
     value: req.body.value,
+    number: logList.length + 1,
   })
-  orderedList.push(order)
+
+  logList.push(newLog)
 
   try {
     fs.writeFileSync(
       path.join('list', `${getNewestList('_list.json')}`),
-      JSON.stringify(orderedList)
+      JSON.stringify(logList)
     )
   } catch (error) {
     logger.error(error)
@@ -327,9 +339,37 @@ router.post('/newlog', function (req, res) {
   }
 ]
  */
-
+  logger.info(
+    `New Donation | 시청자ID: ADMIN, 닉네임: ${req.body.name}, 개수: ${req.body.value}, 메세지: ${req.body.msg}, 후원BJ :${req.body.bj}, 점수변동:${req.body.plusMinus}`
+  )
   res.status(200)
-  res.send({ ok: true })
+  res.send({ ok: true, data: newLog })
+})
+
+router.delete('/newlog', function (req, res) {
+  logger.http('DELETE /admin/newlog')
+  let logList = JSON.parse(
+    fs.readFileSync(
+      path.join('list', `${getNewestList('_list.json')}`),
+      'utf-8'
+    )
+  )
+
+  const indexOfArrToDel = logList.findIndex(
+    (item) => item.number === req.body.number
+  )
+  logList.splice(indexOfArrToDel, 1)
+
+  try {
+    fs.writeFileSync(
+      path.join('list', `${getNewestList('_list.json')}`),
+      JSON.stringify(logList)
+    )
+  } catch (error) {
+    logger.error(error)
+  }
+
+  res.send({ ok: true, result: logList })
 })
 
 module.exports = router

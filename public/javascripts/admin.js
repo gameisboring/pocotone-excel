@@ -1,8 +1,12 @@
-var tooltipTriggerList = [].slice.call(
-  document.querySelectorAll('[data-bs-toggle="tooltip"]')
-)
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-  return new bootstrap.Tooltip(tooltipTriggerEl)
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-right',
+  iconColor: 'white',
+  customClass: {
+    popup: 'colored-toast',
+  },
+  showConfirmButton: false,
+  timer: 1500,
 })
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -10,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   renderConditions()
   renderBoardSetting()
   renderRankSetting()
+  renderDonationList()
 
   await fetch('/notiConfig.json')
     .then((response) => response.json())
@@ -21,9 +26,20 @@ document.addEventListener('DOMContentLoaded', async function () {
       document.getElementById('rankOpacity').value = data.RANK_OP
       document.getElementById('rankOpacitySpan').innerText = data.RANK_OP + '%'
     })
+  var tooltipTriggerList = [].slice.call(
+    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  )
+
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
 })
 socket.on('afreecaHpUrl', async (msg) => {
   document.querySelector('#afreecaHpUrl').innerText = msg
+})
+
+socket.on('news', async (msg) => {
+  addNewDonation(msg)
 })
 
 document.querySelector('#urlSettingForm').addEventListener('submit', (e) => {
@@ -59,6 +75,7 @@ document.querySelector('#serverResetBtn').addEventListener('click', (e) => {
   }
 })
 
+// 도네이션 추가
 document.querySelector('#donaLogSaveForm').addEventListener('submit', (e) => {
   e.preventDefault()
   var bj = $('input:radio[name=newLogSelBJ]:checked').val()
@@ -66,15 +83,6 @@ document.querySelector('#donaLogSaveForm').addEventListener('submit', (e) => {
   var value = $('#newLogValue').val()
   var name = $('#newLogName').val()
   var msg = $('#newLogMsg').val()
-  console.log(
-    JSON.stringify({
-      bj: bj,
-      plusMinus: plusMinus,
-      value: value,
-      name: name,
-      msg: msg,
-    })
-  )
 
   fetch('admin/newlog', {
     method: 'POST',
@@ -92,6 +100,13 @@ document.querySelector('#donaLogSaveForm').addEventListener('submit', (e) => {
     .then((response) => response.json())
     .then((response) => {
       console.log(response)
+      if (response.ok) {
+        addNewDonation(response.data)
+        Toast.fire({
+          icon: 'info',
+          title: '저장에 성공했습니다',
+        })
+      }
     })
 
   $('input:radio[name=newLogSelBJ]').prop('checked', false)
@@ -206,33 +221,32 @@ document.querySelectorAll('.urlBox').forEach((list) => {
   list.addEventListener('click', (e) => {
     e.preventDefault()
 
-    // writeText()의 인자로 넣은 텍스트가 복사된다.
-    window.navigator.clipboard
-      .writeText(list.getAttribute('data-url'))
-      .then(() => {
-        // 복사가 완료되면 이 부분이 호출된다.
-        alert('복사 완료!')
-      })
+    document.execCommand('copy')
+
+    const textArea = document.createElement('textarea')
+    textArea.value = list.getAttribute('data-url')
+    document.body.appendChild(textArea)
+    textArea.select()
+    textArea.setSelectionRange(0, 99999)
+    try {
+      document.execCommand('copy')
+    } catch (err) {
+      console.error('복사 실패', err)
+    }
+    textArea.setSelectionRange(0, 0)
+    document.body.removeChild(textArea)
+    alert('클립보드에 복사되었습니다.')
   })
 })
 
-function deleteBtnClick(event) {
-  event.preventDefault()
-
-  var tr
-  if (event.target.tagName != 'td') {
-    tr = event.target.parentNode
-  } else if (event.target.tagName != 'tr') {
-    tr = event.target
-  }
-
+function deleteBtnClick(mode, keyword, BJ) {
   var data = {
-    keyWord: tr.getAttribute('data-word'),
-    bj: tr.getAttribute('data-bj'),
-    plusMinus: tr.getAttribute('data-plusMinus'),
+    keyWord: keyword,
+    bj: BJ,
+    plusMinus: mode,
   }
+
   if (confirm('삭제하시겠습니까?')) {
-    console.log(data)
     fetch('notification/setting', {
       method: 'DELETE',
       headers: {
@@ -418,48 +432,42 @@ function renderConditionBar(bj, num, data) {
 
 function renderKeyWord(mode, arr, BJ) {
   var querySel = `#keywordPresent tbody`
-  arr.forEach((element) => {
+  arr.forEach((keyword) => {
     const newTr = document.createElement('tr')
     const bjTd = document.createElement('td')
     const plusMinusTd = document.createElement('td')
     const keyWordTd = document.createElement('td')
+    const deleteTd = document.createElement('td')
+    const deleteBtn = document.createElement('button')
 
-    bjTd.scope = 'row'
+    deleteBtn.innerHTML = bjTd.scope = 'row'
     bjTd.innerText = bjName(BJ)
     plusMinusTd.innerText = mode == 'plus' ? '플러스' : '마이너스'
     plusMinusTd.classList.add(
       mode == 'plus' ? 'border-success' : 'border-danger'
     )
-    keyWordTd.innerText = element
+    keyWordTd.innerText = keyword
+    deleteBtn.innerHTML = `<i class="bi bi-trash3"></i>`
+    deleteBtn.addEventListener('click', () => {
+      deleteBtnClick(mode, keyword, BJ)
+    })
 
-    newTr.append(bjTd)
-    newTr.append(plusMinusTd)
-    newTr.append(keyWordTd)
-    newTr.classList.add('pointer', 'table-active')
+    deleteBtn.classList.add('btn', 'btn-secondary', 'btn-sm')
+    deleteTd.appendChild(deleteBtn)
 
-    newTr.setAttribute('data-word', element)
+    newTr.appendChild(bjTd)
+    newTr.appendChild(plusMinusTd)
+    newTr.appendChild(keyWordTd)
+    newTr.appendChild(deleteTd)
+    newTr.classList.add('table-active')
+
+    newTr.setAttribute('data-word', keyword)
     newTr.setAttribute('data-bj', BJ)
     newTr.setAttribute('data-plusMinus', mode)
-    newTr.addEventListener('click', deleteBtnClick)
 
     document.querySelector(querySel).appendChild(newTr)
   })
 }
-
-/* function renderKeyWord(mode, arr, BJ) {
-  var querySel = `#keywordPresent .${BJ}  .${mode}`
-  arr.forEach((element) => {
-    var newBtn = document.createElement('Button')
-    newBtn.innerText = element
-    newBtn.classList.add('btn', 'btn-primary', 'delete', 'rounded')
-    newBtn.setAttribute('data-word', element)
-    newBtn.setAttribute('data-bj', BJ)
-    newBtn.setAttribute('data-plusMinus', mode)
-    newBtn.addEventListener('click', deleteBtnClick)
-
-    document.querySelector(querySel).appendChild(newBtn)
-  })
-} */
 
 async function soundFileUpload(target, bj, num) {
   console.log(target.files[0])
@@ -661,6 +669,77 @@ function renderRankSetting() {
     })
 }
 
+function renderDonationList() {
+  document.getElementById('donationList').replaceChildren()
+  fetch('admin/newlog', {
+    method: 'GET',
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      response.forEach(addNewDonation)
+    })
+}
+
+function addNewDonation(donation) {
+  const tr = document.createElement('tr')
+  tr.classList.add('table-active')
+
+  const tdID = document.createElement('td')
+  tdID.innerText = donation.id
+
+  const tdNick = document.createElement('td')
+  tdNick.innerText = donation.name
+
+  const tdBJ = document.createElement('td')
+  tdBJ.innerText = donation.bj ? bjName(donation.bj) : '없음'
+
+  const tdPlusMinus = document.createElement('td')
+  tdPlusMinus.innerText = donation.plusMinus ? donation.plusMinus : '없음'
+
+  const tdMsg = document.createElement('td')
+  tdMsg.innerText = donation.msg
+  tdMsg.classList.add('donation-msg')
+
+  const tdValue = document.createElement('td')
+  tdValue.innerText = donation.value
+
+  const tdRemoveBtn = document.createElement('button')
+  tdRemoveBtn.classList.add('btn', 'btn-secondary', 'btn-sm')
+  tdRemoveBtn.innerHTML = `<i class="bi bi-trash3"></i>`
+  tdRemoveBtn.addEventListener('click', (e) => {
+    e.preventDefault()
+    const result = confirm('삭제하시겠습니까?')
+    if (result) {
+      fetch('admin/newlog', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(donation),
+      })
+        .then((response) => response.json())
+        .then((response) => {
+          if (response.ok) {
+            console.log(response.result)
+            document.getElementById('donationList').replaceChildren()
+            response.result.forEach(addNewDonation)
+          }
+        })
+    }
+  })
+
+  const tdRemove = document.createElement('td')
+  tdRemove.appendChild(tdRemoveBtn)
+  tr.appendChild(tdID)
+  tr.appendChild(tdNick)
+  tr.appendChild(tdBJ)
+  tr.appendChild(tdPlusMinus)
+  tr.appendChild(tdMsg)
+  tr.appendChild(tdValue)
+  tr.appendChild(tdRemove)
+  document.getElementById('donationList').appendChild(tr)
+}
+
 function boardImgFileUpload(data) {
   console.log(data)
 
@@ -677,6 +756,7 @@ function boardImgFileUpload(data) {
       .then((response) => response.json())
       .then((response) => {
         console.log(response)
+
         if (response.ok) {
           alert('성공적으로 저장되었습니다')
           location.replace(location.href)
@@ -757,6 +837,8 @@ document
 document.getElementById('navBoardBtn').addEventListener('click', navBtnClickFn)
 document.getElementById('navNotiBtn').addEventListener('click', navBtnClickFn)
 document.getElementById('navDataBtn').addEventListener('click', navBtnClickFn)
+document.getElementById('navListBtn').addEventListener('click', navBtnClickFn)
+document.getElementById('navEtcBtn').addEventListener('click', navBtnClickFn)
 
 function navBtnClickFn(e) {
   e.preventDefault()
@@ -786,3 +868,13 @@ function bjName(bjid) {
     return '얌'
   }
 }
+
+$("input[name='newLogBjSpon']:radio").change(function () {
+  if (this.value === 'true') {
+    $("input[name='newLogSelBJ']:radio").attr('disabled', false)
+    $("input[name='newLogPlusMinus']:radio").attr('disabled', false)
+  } else {
+    $("input[name='newLogSelBJ']:radio").attr('disabled', true)
+    $("input[name='newLogPlusMinus']:radio").attr('disabled', true)
+  }
+})

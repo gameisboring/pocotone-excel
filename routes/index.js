@@ -26,6 +26,16 @@ router.get('/notification', function (req, res) {
   })
 })
 
+router.get('/roulette', function (req, res) {
+  logger.http('GET /roulette')
+  res.render('roulette', { title: 'Main Page' })
+})
+
+router.get('/ladder', function (req, res) {
+  logger.http('GET /ladder')
+  res.render('ladder', { title: 'Main Page' })
+})
+
 router.get('/board', function (req, res) {
   logger.http('GET /board')
 

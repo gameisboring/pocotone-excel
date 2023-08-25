@@ -10,11 +10,13 @@ router.use(express.json())
 router.use(express.urlencoded({ extended: false }))
 
 var addr = process.env.NODE_ENV == 'production' ? 'nstream.kr' : 'localhost'
+
 console.log(addr)
+
 /* GET home page. */
 router.get('/', function (req, res, next) {
   logger.http('GET /')
-  res.render('index', { title: 'Main Page' })
+  res.redirect('/admin')
 })
 
 router.get('/notification', function (req, res) {
@@ -28,7 +30,11 @@ router.get('/notification', function (req, res) {
 
 router.get('/roulette', function (req, res) {
   logger.http('GET /roulette')
-  res.render('roulette', { title: 'Main Page' })
+  res.render('roulette.ejs', {
+    title: 'Main Page',
+    port: process.env.PORT,
+    addr: addr,
+  })
 })
 
 router.get('/ladder', function (req, res) {

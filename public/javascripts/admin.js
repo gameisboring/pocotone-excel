@@ -34,19 +34,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     return new bootstrap.Tooltip(tooltipTriggerEl)
   })
 })
-socket.on('afreecaHpUrl', async (msg) => {
-  document.querySelector('#afreecaHpUrl').innerText = msg
-})
 
-socket.on('news', async (msg) => {
-  addNewDonation(msg)
-})
-
-document.querySelector('#urlSettingForm').addEventListener('submit', (e) => {
+/* document.querySelector('#urlSettingForm').addEventListener('submit', (e) => {
   e.preventDefault()
   console.log('restart button clicked')
   socket.emit('urlSetting', document.querySelector('#urlSettingInput').value)
-})
+}) */
 
 document.querySelector('#scriptSaveForm').addEventListener('submit', (e) => {
   e.preventDefault()
@@ -67,12 +60,21 @@ document.querySelector('#scriptSaveForm').addEventListener('submit', (e) => {
 
 document.querySelector('#serverResetBtn').addEventListener('click', (e) => {
   e.preventDefault()
-  var result = confirm(
-    '서버가 재시작 됩니다. 설정은 그대로 유지되며, 후원기록은 초기화 됩니다.'
-  )
-  if (result) {
-    socket.emit('restart', 'restart!')
-  }
+  Swal.fire({
+    title: '서버를 재시작 하시겠습니까?',
+    text: '설정은 그대로 유지되며, 후원기록은 초기화 됩니다.',
+    icon: 'info',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '네',
+    cancelButtonText: '취소',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire('확인', '서버가 재시작 됩니다.', 'success')
+      socket.emit('restart', 'restart!')
+    }
+  })
 })
 
 // 도네이션 추가
@@ -272,12 +274,20 @@ document.querySelector('#stopBtn').addEventListener('click', (e) => {
   e.preventDefault()
   e.target.classList.add('d-none')
   document.querySelector('#resumeBtn').classList.remove('d-none')
+  Toast.fire({
+    icon: 'success',
+    title: '알림이 정지되었습니다',
+  })
   socket.emit('stop', 'stop')
 })
 document.querySelector('#resumeBtn').addEventListener('click', (e) => {
   e.preventDefault()
   e.target.classList.add('d-none')
   document.querySelector('#stopBtn').classList.remove('d-none')
+  Toast.fire({
+    icon: 'success',
+    title: '알림이 재개되었습니다',
+  })
   socket.emit('resume', 'resume')
 })
 
@@ -842,6 +852,7 @@ document.getElementById('navEtcBtn').addEventListener('click', navBtnClickFn)
 
 function navBtnClickFn(e) {
   e.preventDefault()
+  console.log(e.target.getAttribute('data-field'))
   const targetId = e.target.getAttribute('data-field')
   document.querySelectorAll('#main > div').forEach((col) => {
     if (col.id == targetId) {
@@ -856,6 +867,52 @@ function ShowSliderValue(val, id) {
   var opValueView = document.getElementById(id)
   opValueView.innerHTML = val + '%'
 }
+
+document.getElementById('afreecaHpUrlBtn').addEventListener('click', (e) => {
+  e.preventDefault()
+  const url = document.getElementById('afreecaHpUrl').innerText
+  Swal.fire({
+    title: '외부 노출에 주의하세요',
+    showDenyButton: true,
+    confirmButtonText: '네',
+    denyButtonText: `취소`,
+  }).then((result) => {
+    /* Read more about isConfirmed, isDenied below */
+    if (result.isConfirmed) {
+      Swal.fire('현재 세팅된 아프리카도우미 URL', url)
+    } else if (result.isDenied) {
+      return
+    }
+  })
+})
+
+document.getElementById('afreecaHpUrlSetBtn').addEventListener('click', (e) => {
+  e.preventDefault()
+  Swal.fire({
+    title: '새로운 아프리카 도우미 URL 입력',
+    html: `
+    <input type="text" id="url" class="swal2-input" placeholder="아프리카 도우미 후원알림 URL">
+  `,
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: '설정',
+    cancelButtonText: '취소',
+    preConfirm: () => {
+      const url = Swal.getPopup().querySelector('#url').value
+      if (!url) {
+        Swal.showValidationMessage(`URL을 입력하세요`)
+      }
+      return url
+    },
+  }).then((result) => {
+    console.log(result)
+    if (result.isConfirmed) {
+      socket.emit('urlSetting', result.value)
+      Swal.fire(`${result.value}로 
+      변경되었습니다`)
+    }
+  })
+})
 
 function bjName(bjid) {
   if (bjid == 'ori') {

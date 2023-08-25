@@ -44,12 +44,12 @@ module.exports = async (server) => {
       // platform: {twitch: "twitch_channel_id", youtube: "youtube_channel_unique_code"}
     }
 
-    socketAfreehp.on('connect', function () {
+    socketAfreehp.on('connect', () => {
       socketAfreehp.emit('page', page)
       // socket.send("pagecmd", pagecmd);
     })
 
-    socketAfreehp.on('cmd', async function (data) {
+    socketAfreehp.on('cmd', async (data) => {
       var config = getConfigFile()
 
       try {
@@ -93,9 +93,7 @@ module.exports = async (server) => {
               soundUrl: soundUrl,
             }
             inputListDonationData(notiData)
-
             notiData.config = config
-
             SocketIO.emit('news', notiData)
           }
         }
@@ -104,26 +102,26 @@ module.exports = async (server) => {
       }
     })
 
-    socketAfreehp.on('error', function () {
+    socketAfreehp.on('error', () => {
       logger.error('Afreehp error')
     })
 
-    socketAfreehp.on('close', function () {
+    socketAfreehp.on('close', () => {
       logger.info('Afreehp close')
     })
-    socketAfreehp.on('connect_error', function (err) {
+    socketAfreehp.on('connect_error', (err) => {
       logger.error('Afreehp connect_error')
       logger.error(err)
     })
 
-    setTimeout(function () {
+    setTimeout(() => {
       socketAfreehp.connect()
     }, 1000)
   }
 
   SocketIO.on('connection', (socket) => {
     socket.emit('afreecaHpUrl', settings.afreehp.alertbox_url)
-
+    socket.emit('roulette_default', '오리꿍,얌,달체솜,히요코')
     socket.on('reply', (msg) => {
       logger.info(msg)
     })

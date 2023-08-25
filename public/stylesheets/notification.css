@@ -6,6 +6,12 @@
   font-style: normal;
 }
 
+* {
+  outline: none;
+}
+*:focus {
+  outline: none;
+}
 input,
 button {
   border: none;
@@ -21,12 +27,14 @@ button:active {
 }
 .swal2-container {
   background: transparent;
+  overflow-x: hidden !important;
   overflow-y: hidden !important;
   position: absolute;
   padding: 0;
   left: 0;
-  top: 0;
+  top: 50px;
   width: 100%;
+  /* border: red 1px solid; */
 }
 
 .swal2-popup {
@@ -39,7 +47,7 @@ button:active {
   right: 0;
   width: 100%;
   max-width: 100%;
-  border: none;
+  /* border: blue 1px solid; */
 }
 
 /* 전체 텍스트 설정 */

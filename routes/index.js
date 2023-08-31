@@ -5,6 +5,7 @@ require('dotenv').config()
 const fs = require('fs')
 const { getNewestList, getConfigFile } = require('../fileControl')
 const logger = require('../logger')
+const { cookieJwtAuth } = require('../cookieJwtAuth')
 
 router.use(express.json())
 router.use(express.urlencoded({ extended: false }))
@@ -12,12 +13,6 @@ router.use(express.urlencoded({ extended: false }))
 var addr = process.env.NODE_ENV == 'production' ? 'nstream.kr' : 'localhost'
 
 console.log(addr)
-
-/* GET home page. */
-router.get('/', function (req, res, next) {
-  logger.http('GET /')
-  res.redirect('/admin')
-})
 
 router.get('/notification', function (req, res) {
   logger.http('GET /notification')

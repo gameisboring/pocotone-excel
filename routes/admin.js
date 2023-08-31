@@ -7,6 +7,7 @@ const fs = require('fs')
 const { getNewestList, getConfigFile } = require('../fileControl')
 const { dateFormat } = require('../time')
 const logger = require('../logger')
+const { cookieJwtAuth } = require('../cookieJwtAuth')
 
 router.use(express.json())
 router.use(express.urlencoded({ extended: false }))

@@ -104,7 +104,10 @@
           <div class="collapse" id="dashboard-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
               <li>
-                <a href="/roulette" target="_blank" class="link-dark rounded"
+                <a
+                  href="admin/roulette"
+                  target="_blank"
+                  class="link-dark rounded"
                   >도네이션 핀볼</a
                 >
               </li>
@@ -985,48 +988,36 @@
                   class="list-group-item list-group-item-action d-flex gap-2 urlBox"
                   data-bs-toggle="tooltip"
                   data-bs-placement="right"
-                  data-url="nstream.kr:3033/admin"
-                  title="클릭하면 클립보드에 복사됩니다"
-                >
-                  <span class="">어드민 페이지</span>
-                  <span class="flex-grow-1 text-end url">
-                    nstream.kr:3033/admin
-                  </span>
-                </div>
-                <div
-                  class="list-group-item list-group-item-action d-flex gap-2 urlBox"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="right"
-                  data-url="nstream.kr:3033/notification"
+                  data-url="nstream.kr:3033/notification/<%= urlRand %>"
                   title="클릭하면 클립보드에 복사됩니다"
                 >
                   <span class="">알림창</span>
                   <span class="flex-grow-1 text-end url">
-                    nstream.kr:3033/notification
+                    nstream.kr:3033/notification/<%= urlRand %>
                   </span>
                 </div>
                 <div
                   class="list-group-item list-group-item-action d-flex gap-2 urlBox"
                   data-bs-toggle="tooltip"
                   data-bs-placement="right"
-                  data-url="nstream.kr:3033/board"
+                  data-url="nstream.kr:3033/board/<%= urlRand %>"
                   title="클릭하면 클립보드에 복사됩니다"
                 >
                   <span class="">점수판</span>
                   <span class="flex-grow-1 text-end url">
-                    nstream.kr:3033/board
+                    nstream.kr:3033/board/<%= urlRand %>
                   </span>
                 </div>
                 <div
                   class="list-group-item list-group-item-action d-flex gap-2 urlBox"
                   data-bs-toggle="tooltip"
                   data-bs-placement="right"
-                  data-url="nstream.kr:3033/rank"
+                  data-url="nstream.kr:3033/rank/<%= urlRand %>"
                   title="클릭하면 클립보드에 복사됩니다"
                 >
                   <span class="">후원랭킹</span>
                   <span class="flex-grow-1 text-end url">
-                    nstream.kr:3033/rank
+                    nstream.kr:3033/rank/<%= urlRand %>
                   </span>
                 </div>
               </div>

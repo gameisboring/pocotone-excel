@@ -52,7 +52,12 @@ async function tick() {
     reqUrl = replaceAll(reqUrl, '[break]', '')
 
     ttsUrl +=
-      reqUrl + '/' + el.config.SPEAKING_RATE + '/' + el.config.SPEAKING_VOICE
+      '../' +
+      reqUrl +
+      '/' +
+      el.config.SPEAKING_RATE +
+      '/' +
+      el.config.SPEAKING_VOICE
     let notiTextToSpeach
     let notiSound
 
@@ -63,7 +68,7 @@ async function tick() {
     }
 
     try {
-      notiSound = new Audio('sounds/' + el.soundUrl)
+      notiSound = new Audio('../sounds/' + el.soundUrl)
     } catch (error) {
       console.log('notiSound', error)
     }
@@ -115,7 +120,7 @@ async function sweetAlert(data, notiSound, notiTextToSpeach, timer) {
       '</button><br/>', */
     position: 'top-start',
     timer: timer,
-    imageUrl: data.imgUrl,
+    imageUrl: '../' + data.imgUrl,
     imageAlt: 'A image',
     showConfirmButton: false,
     backdrop: `rgba(0,0,0,0.0)`,

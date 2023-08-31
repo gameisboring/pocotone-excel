@@ -94,9 +94,21 @@ const RankImageUpload = multer({ storage: RankImageStorage })
 
 router.get('/', function (req, res) {
   logger.http('GET /admin')
-
+  const { urlRand } = JSON.parse(
+    fs.readFileSync(path.join('config', 'settings.json'))
+  )
   res.render('admin/index', {
     title: 'admin main',
+    port: process.env.PORT,
+    addr: addr,
+    urlRand: urlRand,
+  })
+})
+
+router.get('/roulette', function (req, res) {
+  logger.http('GET /roulette')
+  res.render('roulette.ejs', {
+    title: 'Main Page',
     port: process.env.PORT,
     addr: addr,
   })
@@ -371,6 +383,54 @@ router.delete('/newlog', function (req, res) {
   }
 
   res.send({ ok: true, result: logList })
+})
+
+router.get('/notification/setting', function (req, res) {
+  // logger.http('GET /notification/setting')
+  res.send(getConfigFile())
+})
+
+router.delete('/notification/setting', function (req, res) {
+  logger.http('DELETE /notification/setting')
+  if (req.body) {
+    let setting = getConfigFile()
+    var data = req.body.data
+
+    for (let i = 0; i < setting.BJID[data.bj][data.plusMinus].length; i++) {
+      if (setting.BJID[data.bj][data.plusMinus][i] === data.keyWord) {
+        setting.BJID[data.bj][data.plusMinus].splice(i, 1)
+        i--
+      }
+
+      try {
+        fs.writeFileSync(
+          path.join('config', 'notiConfig.json'),
+          JSON.stringify(setting)
+        )
+      } catch (error) {
+        logger.error(error)
+      }
+    }
+    res.json({ ok: true, data: data })
+  }
+})
+
+router.post('/notification/setting', function (req, res) {
+  logger.http('POST /notification/setting')
+  if (req.body) {
+    let setting = getConfigFile()
+    setting.BJID[req.body.bj][req.body.plusMinus].push(req.body.keyWord)
+    try {
+      fs.writeFileSync(
+        path.join('config', 'notiConfig.json'),
+        JSON.stringify(setting)
+      )
+    } catch (error) {
+      console.log(error)
+    }
+    res.status(200)
+    res.json({ ok: true, data: req.body })
+  }
 })
 
 module.exports = router

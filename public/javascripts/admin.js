@@ -184,7 +184,7 @@ document
     var plusMinus = $('input:radio[name=plusMinus]:checked').val()
     var keyWord = $('#keyWordInput').val()
 
-    fetch('notification/setting', {
+    fetch('admin/notification/setting', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ function deleteBtnClick(mode, keyword, BJ) {
   }
 
   if (confirm('삭제하시겠습니까?')) {
-    fetch('notification/setting', {
+    fetch('admin/notification/setting', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -292,7 +292,7 @@ document.querySelector('#resumeBtn').addEventListener('click', (e) => {
 })
 
 async function renderNowKeyWord() {
-  await fetch('/notification/setting')
+  await fetch('admin/notification/setting')
     .then((response) => response.json())
     .then(async (data) => {
       var BJs = Object.keys(data.BJID)
@@ -305,7 +305,7 @@ async function renderNowKeyWord() {
 }
 
 async function renderConditions() {
-  await fetch('/notification/setting')
+  await fetch('admin/notification/setting')
     .then((response) => response.json())
     .then(async (data) => {
       Object.keys(data.BJSOUND).forEach((bj) => {

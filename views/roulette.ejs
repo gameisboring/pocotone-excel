@@ -112,6 +112,12 @@
         width: 100%;
         height: 100%;
       }
+
+      input[type='number']::-webkit-outer-spin-button,
+      input[type='number']::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
       #rankings {
         position: absolute;
         top: 50%;
@@ -191,16 +197,20 @@
       .settings .buttons {
         display: flex;
         gap: 0.5rem;
+        justify-content: space-between;
       }
       .settings .actions label {
         font-size: 1.1rem;
         display: flex;
+        justify-content: center;
+        align-items: center;
       }
       .settings button {
         padding: 0.25rem 0.75rem;
         font-size: 1rem;
         border-radius: 10px;
         border: 0;
+        flex-grow: 1;
       }
 
       .settings button:hover {
@@ -218,11 +228,12 @@
       input[type='number'] {
         width: 3rem;
         text-align: center;
-        background-color: transparent;
         border: none;
         outline: none;
         font: inherit;
         color: inherit;
+        margin-left: 0.2rem;
+        margin-right: 0.2rem;
       }
       #inGame {
         width: fit-content;
@@ -320,7 +331,6 @@
         let rankArr = []
 
         if (e.length > 0) {
-          console.log(e.length)
           e.forEach((name) => {
             let dd = parseName(name)
             if (Object.keys(parsedNames).includes(dd.name)) {
@@ -389,6 +399,7 @@
       }
       let ready = !1
       document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('#marbleUnit').value = 54
         document.querySelector('#in_names').addEventListener('change', () => {
           getReady()
         }),
@@ -434,6 +445,18 @@
               const e = window.roullete.getCount()
               setWinnerRank(Math.floor(Math.random() * e + 1))
             }),
+          document
+            .querySelector('#btnFirstWinner')
+            .addEventListener('click', () => {
+              const e = window.roullete.getCount()
+              setWinnerRank(1)
+            }),
+          document
+            .querySelector('#btnLastWinner')
+            .addEventListener('click', () => {
+              const e = window.roullete.getCount()
+              setWinnerRank(e)
+            }),
           document.querySelector('#btnShake').addEventListener('click', () => {
             window.roullete.shake(),
               gtag('event', 'shake', {
@@ -466,8 +489,16 @@
       })
       socket.on('news', async (msg) => {
         let donationMessage = msg.msg
+        let marbleUnit = Number(document.querySelector('#marbleUnit').value)
+        let donationValue = Number(msg.value)
+        console.log(
+          donationValue,
+          typeof donationValue,
+          marbleUnit,
+          typeof marbleUnit
+        )
         donationMessage = `${donationMessage.replace(/[\/*]/gim, '')}${
-          msg.value > 100 ? '*' + msg.value / 100 : ''
+          donationValue > marbleUnit ? '*' + donationValue / marbleUnit : ''
         }`
 
         if (!document.querySelector('#settings').classList.contains('hideY')) {
@@ -487,7 +518,6 @@
         있습니다. (ex: Tom*2, Jane/5)<br />
         후원 메세지 내의 슬래시와 별은 자동으로 제거됩니다.(ex: Tom*2 ->
         Tom2)<br />
-        후원 별풍선 100개당 구슬 1개 추가됩니다. (ex: Tom 567개 -> Tom 구슬 5개)
       </p>
       <textarea
         id="in_names"
@@ -495,13 +525,30 @@
       >
       </textarea>
       <div class="actions">
-        <label>
-          당첨 순위는
-          <input type="number" id="in_winningRank" value="1" min="1" />번째 구슬
-          입니다
-        </label>
         <div class="buttons">
-          <button id="btnRandomWinner">랜덤 승자</button>
+          <label>
+            별풍선
+            <input type="number" id="marbleUnit" value="" />개 = 구슬 1 개
+            <span id="marbleUnitEx"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="buttons">
+          <label>
+            당첨 순위는
+            <input type="number" id="in_winningRank" value="1" min="1" />번째
+            구슬 입니다
+          </label>
+          <div class="buttons">
+            <button id="btnFirstWinner">1등</button>
+            <button id="btnLastWinner">꼴등</button>
+            <button id="btnRandomWinner">랜덤</button>
+          </div>
+        </div>
+
+        <div class="buttons">
           <label>
             <input type="checkbox" id="chkSkill" checked /> 스킬 사용
           </label>

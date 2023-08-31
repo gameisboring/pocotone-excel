@@ -1,6 +1,7 @@
 var createError = require('http-errors')
 var express = require('express')
 var path = require('path')
+const fs = require('fs')
 var cookieParser = require('cookie-parser')
 require('dotenv').config()
 // const basicAuth = require('express-basic-auth')
@@ -30,19 +31,11 @@ app.disable('x-powered-by')
 //     challenge: true,
 //   })
 // )
-/* GET home page. */
-app.get('/', function (req, res, next) {
-  logger.http('GET /')
-  if (req.headers.cookie != undefined) {
-    res.redirect('/admin')
-  }
-  res.render('index', { title: 'mainPage' })
-})
 
 setUpLoginRoute.login(app)
 
-app.use(cookieJwtAuth)
 app.use('/', indexRouter)
+app.use(cookieJwtAuth)
 app.use('/admin', adminRouter)
 
 app.use(function (err, req, res, next) {

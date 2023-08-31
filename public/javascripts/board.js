@@ -44,7 +44,7 @@ function addListBar(data) {
   const barTextMenu = document.createElement('div')
 
   var el = `<div class="bar">
-  <img src="images/board/listbar_${barImageFileName}.png" alt="" />
+  <img src="../images/board/listbar_${barImageFileName}.png" alt="" />
   <div class="barText menu">
     <span class="rank">${data.rank}</span>
     <span class="bj">${data.BJ}</span>
@@ -57,7 +57,7 @@ function addListBar(data) {
 }
 
 function renderListVar() {
-  fetch('board/data', {
+  fetch('/board/data', {
     method: 'GET',
   })
     .then((response) => response.json())
@@ -70,7 +70,7 @@ function renderListVar() {
 }
 
 function setOpacity() {
-  fetch('notification/setting', {
+  fetch('../admin/notification/setting', {
     method: 'GET',
   })
     .then((response) => response.json())

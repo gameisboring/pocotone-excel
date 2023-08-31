@@ -5,7 +5,6 @@ require('dotenv').config()
 const fs = require('fs')
 const { getNewestList, getConfigFile } = require('../fileControl')
 const logger = require('../logger')
-const { cookieJwtAuth } = require('../cookieJwtAuth')
 
 router.use(express.json())
 router.use(express.urlencoded({ extended: false }))
@@ -14,95 +13,23 @@ var addr = process.env.NODE_ENV == 'production' ? 'nstream.kr' : 'localhost'
 
 console.log(addr)
 
-router.get('/notification', function (req, res) {
-  logger.http('GET /notification')
-  res.render('notification', {
-    title: 'Notification',
-    port: process.env.PORT,
-    addr: addr,
-  })
-})
-
-router.get('/roulette', function (req, res) {
-  logger.http('GET /roulette')
-  res.render('roulette.ejs', {
-    title: 'Main Page',
-    port: process.env.PORT,
-    addr: addr,
-  })
-})
-
-router.get('/ladder', function (req, res) {
-  logger.http('GET /ladder')
-  res.render('ladder', { title: 'Main Page' })
-})
-
-router.get('/board', function (req, res) {
-  logger.http('GET /board')
-
-  res.render('board', {
-    title: 'Board',
-    port: process.env.PORT,
-    addr: addr,
-  })
-})
-
-router.get('/rank', function (req, res) {
-  logger.http('GET /rank')
-
-  res.render('rank', {
-    title: 'Rank',
-    port: process.env.PORT,
-    addr: addr,
-  })
-})
-
-router.get('/notification/setting', function (req, res) {
-  // logger.http('GET /notification/setting')
-  res.send(getConfigFile())
-})
-
-router.post('/notification/setting', function (req, res) {
-  logger.http('POST /notification/setting')
-  if (req.body) {
-    let setting = getConfigFile()
-    setting.BJID[req.body.bj][req.body.plusMinus].push(req.body.keyWord)
-    try {
-      fs.writeFileSync(
-        path.join('config', 'notiConfig.json'),
-        JSON.stringify(setting)
-      )
-    } catch (error) {
-      console.log(error)
-    }
-    res.status(200)
-    res.json({ ok: true, data: req.body })
+function urlCheck(param) {
+  const { urlRand } = JSON.parse(
+    fs.readFileSync(path.join('config', 'settings.json'))
+  )
+  console.log(`Key: ${urlRand} Param: ${param}`)
+  if (urlRand != param || !param) {
+    return res.redirect('/')
   }
-})
+}
 
-router.delete('/notification/setting', function (req, res) {
-  logger.http('DELETE /notification/setting')
-  if (req.body) {
-    let setting = getConfigFile()
-    var data = req.body.data
-
-    for (let i = 0; i < setting.BJID[data.bj][data.plusMinus].length; i++) {
-      if (setting.BJID[data.bj][data.plusMinus][i] === data.keyWord) {
-        setting.BJID[data.bj][data.plusMinus].splice(i, 1)
-        i--
-      }
-
-      try {
-        fs.writeFileSync(
-          path.join('config', 'notiConfig.json'),
-          JSON.stringify(setting)
-        )
-      } catch (error) {
-        logger.error(error)
-      }
-    }
-    res.json({ ok: true, data: data })
+/* GET home page. */
+router.get('/', function (req, res, next) {
+  logger.http('GET /')
+  if (req.headers.cookie != undefined) {
+    res.redirect('/admin')
   }
+  res.render('index', { title: 'mainPage' })
 })
 
 router.get('/board/data', function (req, res) {
@@ -201,6 +128,46 @@ router.get('/rank/data', function (req, res) {
 
   let setting = getConfigFile()
   res.json({ result: result, limit: setting.RANK_LIMIT })
+})
+
+router.get('/board/:rand', function (req, res) {
+  logger.http('GET /board')
+  console.log(req.params)
+  urlCheck(req.params.rand)
+  res.render('board', {
+    title: 'Board',
+    port: process.env.PORT,
+    addr: addr,
+  })
+})
+
+router.get('/rank/:rand', function (req, res) {
+  logger.http('GET /rank')
+  urlCheck(req.params.rand)
+  res.render('rank', {
+    title: 'Rank',
+    port: process.env.PORT,
+    addr: addr,
+  })
+})
+
+router.get('/notification/:rand', function (req, res) {
+  logger.http('GET /notification')
+  urlCheck(req.params.rand)
+  res.render('notification', {
+    title: 'Notification',
+    port: process.env.PORT,
+    addr: addr,
+  })
+})
+
+router.get('/ladder/:rand', function (req, res) {
+  logger.http('GET /ladder')
+  if (!req.params) {
+    console.log('ee')
+  }
+  urlCheck(req.params.rand)
+  res.render('ladder', { title: 'Main Page' })
 })
 
 module.exports = router

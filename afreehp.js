@@ -8,6 +8,10 @@ var path = require('path')
 const { dateFormat } = require('./time')
 const { getNewestList, getConfigFile } = require('./fileControl')
 const logger = require('./logger')
+const WebSocket = require('ws')
+Number.prototype.padLeft = function (e, t) {
+  return Array(e - String(this).length + 1).join(t || '0') + this
+}
 
 module.exports = async (server) => {
   const SocketIO = require('socket.io')(server, { path: '/socket.io' })
@@ -30,7 +34,29 @@ module.exports = async (server) => {
       JSON.parse(fs.readFileSync(path.join('config', 'settings.json')))
     )
 
-    const url_ws_afreehp = 'http://afreehp.kr:13536'
+    const url_ws_afreehp = 'ws://110.10.76.66:8060/Websocket'
+    /*const _socketAfreehp = new WebSocket(
+      'ws://' + '110.10.76.66' + ':' + '8060' + '/Websocket',
+      'chat'
+    )
+    _socketAfreehp.binaryType = 'arraybuffer'
+
+    _socketAfreehp.onopen = function (e) {
+      console.log('eee')
+      var chatToken =
+        '.A32.7bbT56vyHM9fKZk.2RbqkdaE1VyAJcvr8zFej3vpzYaJz25rQWshCTIHWpclpMgtu1YdWRAf_dZBJ_KGibfDyKbcsX7RvlW2e7wxsWmb6PYx9mJCOXQimWf5f6Ffv4fcRWGfhum4Lzni2Ejan30-Lsbch4qMXBGw8QzuhHJHdpQPQUDfcAZWczivJiwuBo-sbf6plicuXo3yCleQAV078YbPw3xMEjZg-URn8cy_H55jwNno61ZqS0kAPoBTfGsJX_bKGcLiofmnS_7vcJQIBx2gAEga90lLKrdQj8fFazZZm6KTJKmtC5RzubB9MSiZ9vEdmH3ipMLK4n2ibtqhL_hGd4aBlqvjSQgUnZtBa6S1qF1UW05LM1mcCgVxMuAX0FjSzNrKrN-1TbiN9ZTel_FKWBki7dooY-U4zCFsf_QQECZKoxv9usnyic8U6AvVSBsu4NkrGpeaW3CN8odLNROGWqvlPkc2kivCx-JqPK82IkMzhVGrpNh6mGWh8OmqBFrcV7YHp4LH_9_OIC213vXCXGudZuIOTBMzZS0D3V_VjnI4CIQ_fSfyTjU'
+      _socketAfreehp.send(afreeca.login(chatToken, '', 4))
+      _socketAfreehp.send(afreeca.joinch())
+    }
+
+    _socketAfreehp.onmessage = function (e) {
+      var t = null
+      e.data instanceof ArrayBuffer
+        ? ((t = e.data), afreeca.parseMessage(t, _socketAfreehp))
+        : (t = afreeca.readBuffer(e.data, _socketAfreehp))
+      console.log(t)
+    }
+ */
     const socketAfreehp = io(url_ws_afreehp, {
       transports: ['websocket'],
       reconnection: true,
@@ -38,20 +64,37 @@ module.exports = async (server) => {
       autoConnect: false,
     })
 
+    // to get all packet
+    var onevent = socketAfreehp.onevent
+    socketAfreehp.onevent = function (packet) {
+      var args = packet.data || []
+      onevent.call(this, packet) // original call
+      packet.data = ['*'].concat(args)
+      onevent.call(this, packet) // additional call to catch-all
+    }
+
     var page = {
       idx: settings.afreehp.idx,
       // pagelist: [{pageid: "alert", subpage: "0"}],
       // platform: {twitch: "twitch_channel_id", youtube: "youtube_channel_unique_code"}
     }
 
+    // all events
+    socketAfreehp.on('*', function (event, data) {
+      console.log('all events')
+      console.log('event type = ', event)
+      doSomething(data)
+    })
+
     socketAfreehp.on('connect', () => {
       socketAfreehp.emit('page', page)
+      console.log('connect')
+      console.log(page)
       // socket.send("pagecmd", pagecmd);
     })
 
-    socketAfreehp.on('cmd', async (data) => {
+    /* socketAfreehp.on('cmd', async (data) => {
       var config = getConfigFile()
-
       try {
         if (
           data.data !== undefined &&
@@ -68,6 +111,7 @@ module.exports = async (server) => {
           )
 
           var soundUrl = await getSoundSrc(config.BJSOUND, data.data.value, BJ)
+
           if (data.data.broad == 'afreeca' && type == 'star') {
             logger.info(
               `New Donation | 타입: ${type}, 시청자 ID:${id}, 시청자 이름:${name}, 개수:${val}, 메세지:${
@@ -100,19 +144,20 @@ module.exports = async (server) => {
       } catch (e) {
         logger.error('Afreehp message parse error: ', e.toString())
       }
-    })
+    }) */
 
-    socketAfreehp.on('error', () => {
+    /*     socketAfreehp.on('error', () => {
       logger.error('Afreehp error')
-    })
+    }) */
 
-    socketAfreehp.on('close', () => {
+    /*     socketAfreehp.on('close', () => {
       logger.info('Afreehp close')
-    })
-    socketAfreehp.on('connect_error', (err) => {
+    }) */
+
+    /*     socketAfreehp.on('connect_error', (err) => {
       logger.error('Afreehp connect_error')
       logger.error(err)
-    })
+    }) */
 
     setTimeout(() => {
       socketAfreehp.connect()
@@ -136,7 +181,7 @@ module.exports = async (server) => {
     })
 
     socket.on('urlSetting', async (msg) => {
-      logger.info('urlSetting : afreeca helper url : ', msg)
+      logger.info('urlSetting : afreeca helper url : ' + msg)
       /* {"afreehp":{"use":true,"alertbox_url":"http://afreehp.kr/page/VZWWnKaZx8bYmqSVwJY"}} */
       var newSetting = JSON.parse(
         fs.readFileSync(path.join('config', 'settings.json'))
@@ -149,9 +194,10 @@ module.exports = async (server) => {
           path.join('config', 'settings.json'),
           JSON.stringify(newSetting)
         )
-
-        socket.emit('afreecaHpUrl', newSetting.afreehp.alertbox_url)
+        socket.emit('urlChange', { ok: true, data: msg })
         process.exit(1)
+      } else {
+        socket.emit('urlChange', { ok: false })
       }
     })
 
@@ -212,6 +258,11 @@ module.exports = async (server) => {
     }
   }
 
+  function doSomething(data) {
+    console.log('do Something')
+    console.log(data)
+  }
+
   async function getSoundSrc(soundConfig, value, BJ) {
     value = Number(value)
     result = ''
@@ -227,7 +278,6 @@ module.exports = async (server) => {
         }
       })
     }
-
     return result ? result : soundConfig.default
   }
 
@@ -235,7 +285,7 @@ module.exports = async (server) => {
     try {
       var response = await requestPromise(settings.afreehp.alertbox_url)
       if (response.statusCode == 200) {
-        var matched_res = response.body.match(/idx:\s*"([a-zA-Z0-9]+)",/)
+        var matched_res = response.body.match(/idx:\s*"([a-zA-Z0-9_.~-]+)",/)
         if (matched_res !== null && matched_res.length > 1) {
           settings.afreehp.idx = matched_res[1]
           logger.info(`Get afreehp.idx succeed : ${settings.afreehp.idx}\n`)

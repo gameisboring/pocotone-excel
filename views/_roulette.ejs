@@ -1,94 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-5899C1DJM0"
+    ></script>
     <script>
-      window.dataLayer = window.dataLayer || []
       function gtag() {
         dataLayer.push(arguments)
       }
-      gtag('js', new Date())
-      gtag('config', 'G-5899C1DJM0')
+      ;(window.dataLayer = window.dataLayer || []),
+        gtag('js', new Date()),
+        gtag('config', 'G-5899C1DJM0')
     </script>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link
       rel="apple-touch-icon"
       sizes="57x57"
-      href="/roulette/apple-icon-57x57.2f316c01.png"
+      href="/roulette/apple-icon-57x57.d2489b05.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="60x60"
-      href="/roulette/apple-icon-60x60.3597a0fa.png"
+      href="/roulette/apple-icon-60x60.c256c4c3.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="72x72"
-      href="/roulette/apple-icon-72x72.38143b41.png"
+      href="/roulette/apple-icon-72x72.3c7457a3.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="76x76"
-      href="/roulette/apple-icon-76x76.c2eb0cfb.png"
+      href="/roulette/apple-icon-76x76.c458ac0e.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="114x114"
-      href="/roulette/apple-icon-114x114.482241b6.png"
+      href="/roulette/apple-icon-114x114.2a406841.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="120x120"
-      href="/roulette/apple-icon-120x120.721e3998.png"
+      href="/roulette/apple-icon-120x120.baa4374c.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="144x144"
-      href="/roulette/apple-icon-144x144.15b26ac4.png"
+      href="/roulette/apple-icon-144x144.b352f2ad.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="152x152"
-      href="/roulette/apple-icon-152x152.c70b6780.png"
+      href="/roulette/apple-icon-152x152.3ed1a2e0.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="/roulette/apple-icon-180x180.1c38e27c.png"
+      href="/roulette/apple-icon-180x180.1794adb6.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="192x192"
-      href="/roulette/android-icon-192x192.778fbd46.png"
+      href="/roulette/android-icon-192x192.1cb445bf.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="32x32"
-      href="/roulette/favicon-32x32.09fde066.png"
+      href="/roulette/favicon-32x32.ca213894.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="96x96"
-      href="/roulette/favicon-96x96.b27ae6bd.png"
+      href="/roulette/favicon-96x96.0b3c763e.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="16x16"
-      href="/roulette/favicon-16x16.c68c989a.png"
+      href="/roulette/favicon-16x16.e4bfc49f.png"
     />
     <link rel="manifest" href="/roulette/assets/manifest.webmanifest" />
     <meta name="msapplication-TileColor" content="#ffffff" />
     <meta
       name="msapplication-TileImage"
-      content="/assets/ms-icon-144x144.png"
+      content="/roulette/assets/ms-icon-144x144.png"
     />
     <meta name="theme-color" content="#ffffff" />
-    <title>Marble Roulette</title>
+    <title><%= title %></title>
     <style>
       @font-face {
         font-family: 'LINESeedKR-Bd';
@@ -101,9 +105,7 @@
         box-sizing: border-box;
         font-family: 'LINESeedKR-Bd';
       }
-      body {
-        margin: 0;
-      }
+
       canvas {
         position: fixed;
         inset: 0;
@@ -116,35 +118,26 @@
         -webkit-appearance: none;
         margin: 0;
       }
-      #container {
-        display: flex;
+      #rankings {
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 50;
-        width: 100%;
-        justify-content: center;
-        align-items: center;
-        transition: all 1s ease-in-out;
-      }
-      #rankings {
-        z-index: 10;
-        color: #000;
-        min-height: 40vh;
-        background: #fff;
-        border: 2px solid #f38c0e;
-        border-radius: 0.75rem;
+        display: flex;
         flex-direction: column;
         align-items: center;
+        transform: translate(-35%, -50%);
+        z-index: 10;
         padding: 0.8rem 3rem;
-        font-size: 3vh;
-        font-weight: bold;
-        width: 25%;
-        height: 20%;
-        transition: all 1s ease-in-out;
-        display: flex;
         box-shadow: inset 0 0 6rem 4px #fff5ef;
+        border: 2px solid #f38c0e;
+        background: #ffffff;
+        border-radius: 0.75em;
+        color: #000;
+        min-height: 449px;
+        width: 30rem;
+        font-size: 1.7rem;
+        font-weight: bold;
+        transition: all 1s ease-in-out;
       }
       #rankings ul {
         margin: 0;
@@ -161,10 +154,10 @@
       }
       .settings {
         transition: all 1s ease-in-out;
-        /* position: absolute; */
-        /* top: 50%; */
-        /* left: 40%; */
-        /* transform: translate(-15%, -50%); */
+        position: absolute;
+        top: 50%;
+        left: 37%;
+        transform: translate(-15%, -50%);
         padding: 1rem;
         border-radius: 0.75em;
         box-shadow: inset 0 0 6rem 4px #f27127;
@@ -180,7 +173,7 @@
         display: none !important;
       }
       .hideY {
-        transform: translate(-50%, -300%) !important;
+        transform: translateY(-300%) !important;
       }
 
       .settings:focus-within {
@@ -272,23 +265,6 @@
       #btnShake {
         font-size: 2em;
       }
-
-      #cameraInfo {
-        position: absolute;
-        color: white;
-        z-index: 50;
-        left: 10px;
-        bottom: 10px;
-      }
-
-      #cameraInfo span {
-        display: none;
-      }
-
-      #cameraInfo span.free {
-        display: block !important;
-      }
-
       /*  div#notice {
         z-index: 999;
         max-width: 100%;
@@ -317,7 +293,9 @@
     </style>
   </head>
   <body>
-    <script src="/roulette/index.bc16ab9b.js" defer=""></script>
+    <script type="module" src="/roulette/index.ff8d850a.js"></script>
+    <!-- Optional JavaScript -->
+    <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       function getNames() {
         return document
@@ -338,15 +316,10 @@
           count: r ? parseInt(n.exec(e)[1].replace('*', '')) : 1,
         }
       }
-      // backup
       function getReady() {
         const e = getNames()
         window.roullete.setMarbles(e), (ready = e.length > 0)
       }
-      /* function getReady() {
-        const e = getRank()
-        window.roullete.setMarbles(e), (ready = e.length > 0)
-      } */
       function setWinnerRank(e) {
         ;(document.querySelector('#in_winningRank').value = e),
           (window.options.winningRank = e - 1),
@@ -392,22 +365,21 @@
         const o = []
         Object.keys(n).forEach((e) => {
           n[e] > 1 ? o.push(`${e}*${n[e]}`) : o.push(e)
-        })
-        if (e.length > 0) {
-          document.querySelector('#rankings').style.transform =
-            'translate(0, 0)'
-          document.querySelector('#settings').style.transform =
-            'translate(0, 0)'
+        }),
+          (document.querySelector('#in_names').value = o.join(',')),
+          renderRank(),
+          getReady()
+        if (document.querySelector('#in_names').value) {
+          ;(document.querySelector('#rankings').style.transform =
+            'translate(23%, -50%)'),
+            (document.querySelector('#settings').style.transform =
+              'translate(-40%, -50%)')
         } else {
-          document.querySelector('#rankings').style.transform =
-            'translate(-50%, -0%)'
-          document.querySelector('#settings').style.transform =
-            'translate(50%, -0%)'
+          ;(document.querySelector('#rankings').style.transform =
+            'translate(-35%, -50%)'),
+            (document.querySelector('#settings').style.transform =
+              'translate(-15%, -50%)')
         }
-        if (!document.querySelector('#in_names').value == '') {
-          document.querySelector('#in_names').value = o.join(',') + ','
-        }
-        renderRank(), getReady()
       }
       function renderRank() {
         const rank = getRank()
@@ -426,76 +398,26 @@
         }
       }
       let ready = !1
-      var keyPressed = {}
       document.addEventListener('DOMContentLoaded', () => {
-        window.addEventListener('keydown', (e) => {
-          if (
-            document.querySelector('#container').classList.contains('hideY')
-          ) {
-            if (e.code == 'Space') {
-              window.roullete.shake()
-            }
-            if (e.code == 'KeyV') {
-              window.roullete._camera.setSelfCam(
-                !window.roullete._camera.selfCam
-              )
-
-              document
-                .querySelector('#cameraInfo span')
-                .classList.contains('free')
-                ? document
-                    .querySelector('#cameraInfo span')
-                    .classList.remove('free')
-                : document
-                    .querySelector('#cameraInfo span')
-                    .classList.add('free')
-            }
-            if (window.roullete._camera.selfCam) {
-              window.roullete._camera.keyPressed[e.code] = true
-            }
-          }
-        })
-
-        window.addEventListener('keyup', (e) => {
-          if (
-            document.querySelector('#container').classList.contains('hideY') &&
-            window.roullete._camera.selfCam
-          ) {
-            window.roullete._camera.keyPressed[e.code] = false
-          }
-        })
-        /* setInterval(function () {
-          if (keyPressed['ArrowUp']) {
-            window.roullete._camera.selfUpdate('ArrowUp')
-          }
-          if (keyPressed['ArrowDown']) {
-            window.roullete._camera.selfUpdate('ArrowDown')
-          }
-          if (keyPressed['ArrowRight']) {
-            window.roullete._camera.selfUpdate('ArrowRight')
-          }
-          if (keyPressed['ArrowLeft']) {
-            window.roullete._camera.selfUpdate('ArrowLeft')
-          }
-        }, 10) */
         document.querySelector('#marbleUnit').value = 54
-        document.querySelector('#in_names').addEventListener('input', (e) => {
-          if (e.data == ',') inputNameFn()
+        document.querySelector('#in_names').addEventListener('change', () => {
+          getReady()
         }),
           document.querySelector('#in_names').addEventListener('blur', () => {
             inputNameFn()
-          })
-
-        document.querySelector('#btnShuffle').addEventListener('click', () => {
-          inputNameFn()
-        })
-
-        /* document.querySelector('#btnStop').addEventListener('click', () => {
+          }),
+          document
+            .querySelector('#btnShuffle')
+            .addEventListener('click', () => {
+              inputNameFn()
+            }),
+          /* document.querySelector('#btnStop').addEventListener('click', () => {
             window.roullete.reset(), (ready = !1)
           }), */
-        document.querySelector('#btnStart').addEventListener('click', () => {
-          if (!document.querySelector('#in_names').value == '') {
-            document.querySelector('#container').classList.add('hideY'),
+          document.querySelector('#btnStart').addEventListener('click', () => {
+            if (!document.querySelector('#in_names').value == '') {
+              document.querySelector('#settings').classList.add('hideY'),
+                document.querySelector('#rankings').classList.add('hideY')
               ready &&
                 (gtag('event', 'start', {
                   event_category: 'roulette',
@@ -503,8 +425,8 @@
                   value: window.roullete.getCount(),
                 }),
                 window.roullete.start())
-          }
-        }),
+            }
+          }),
           document
             .querySelector('#chkSkill')
             .addEventListener('change', (e) => {
@@ -545,8 +467,8 @@
           }),
           window.roullete.addEventListener('goal', () => {
             ;(ready = !1),
-              document.querySelector('#container').classList.remove('hideY')
-            window.roullete._camera.setSelfCam(false)
+              document.querySelector('#settings').classList.remove('hideY')
+            document.querySelector('#rankings').classList.remove('hideY')
           }),
           window.roullete.addEventListener('shakeAvailableChanged', (e) => {
             document
@@ -556,71 +478,100 @@
           document.querySelector('#btnShuffle').click()
       })
     </script>
-    <div id="container">
-      <div id="settings" class="settings">
-        <p class="text">
-          각 이름 뒤에 별과 슬래시를 붙여 각 구슬의 수와 가중치를 설정할 수
-          있습니다. (ex: Tom*2, Jane/5)<br />
-          후원 메세지 내의 슬래시와 별은 자동으로 제거됩니다.(ex: Tom*2 ->
-          Tom2)<br />
-        </p>
-        <textarea
-          id="in_names"
-          placeholder="쉼표나 줄로 구분된 텍스트를 입력하세요"
-        ></textarea>
-        <div class="actions">
+    <script type="text/javascript">
+      const socket = io.connect('http://<%= addr %>:<%= port %>', {
+        path: '/socket.io',
+        transports: ['websocket'],
+      })
+      socket.on('roulette_default', async (msg) => {
+        // document.querySelector('#in_names').value = msg
+        console.log(msg)
+      })
+      socket.on('news', async (msg) => {
+        let donationMessage = msg.msg
+        let marbleUnit = Number(document.querySelector('#marbleUnit').value)
+        let donationValue = Number(msg.value)
+        console.log(
+          donationValue,
+          typeof donationValue,
+          marbleUnit,
+          typeof marbleUnit
+        )
+        donationMessage = `${donationMessage.replace(/[\/*]/gim, '')}${
+          donationValue > marbleUnit ? '*' + donationValue / marbleUnit : ''
+        }`
+
+        if (!document.querySelector('#settings').classList.contains('hideY')) {
+          if (document.querySelector('#in_names').value == '') {
+            document.querySelector('#in_names').value += donationMessage
+          } else {
+            document.querySelector('#in_names').value += `,${donationMessage}`
+          }
+
+          inputNameFn()
+        }
+      })
+    </script>
+    <div id="settings" class="settings">
+      <p class="text">
+        각 이름 뒤에 별과 슬래시를 붙여 각 구슬의 수와 가중치를 설정할 수
+        있습니다. (ex: Tom*2, Jane/5)<br />
+        후원 메세지 내의 슬래시와 별은 자동으로 제거됩니다.(ex: Tom*2 ->
+        Tom2)<br />
+      </p>
+      <textarea
+        id="in_names"
+        placeholder="쉼표나 줄로 구분된 텍스트를 입력하세요"
+      >
+      </textarea>
+      <div class="actions">
+        <div class="buttons">
+          <label>
+            별풍선
+            <input type="number" id="marbleUnit" value="" />개 = 구슬 1 개
+            <span id="marbleUnitEx"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="buttons">
+          <label>
+            당첨 순위는
+            <input type="number" id="in_winningRank" value="1" min="1" />번째
+            구슬 입니다
+          </label>
           <div class="buttons">
-            <label>
-              별풍선
-              <input type="number" id="marbleUnit" value="" />개 = 구슬 1 개
-              <span id="marbleUnitEx"></span>
-            </label>
+            <button id="btnFirstWinner">1등</button>
+            <button id="btnLastWinner">꼴등</button>
+            <button id="btnRandomWinner">랜덤</button>
           </div>
         </div>
 
-        <div class="actions">
-          <div class="buttons">
-            <label>
-              당첨 순위는
-              <input type="number" id="in_winningRank" value="1" min="1" />번째
-              구슬 입니다
-            </label>
-            <div class="buttons">
-              <button id="btnFirstWinner">1등</button>
-              <button id="btnLastWinner">꼴등</button>
-              <button id="btnRandomWinner">랜덤</button>
-            </div>
-          </div>
-
-          <div class="buttons">
-            <label>
-              <input type="checkbox" id="chkSkill" checked="" /> 스킬 사용
-            </label>
-            <!-- <button id="btnStop">Stop</button> -->
-            <button id="btnStart">시작</button>
-            <button id="btnShuffle">셔플</button>
-          </div>
+        <div class="buttons">
+          <label>
+            <input type="checkbox" id="chkSkill" checked /> 스킬 사용
+          </label>
+          <!-- <button id="btnStop">Stop</button> -->
+          <button id="btnStart">시작</button>
+          <button id="btnShuffle">셔플</button>
         </div>
-        <!--  <img
-    src="/images/roulette/marble_body.png"
-    alt=""
-    width="100px"
-    height="100px"
-    style="z-index: 11"
-  /> -->
       </div>
-      <div id="rankings">
-        <h2 style="text-align: center">랭킹</h2>
-        <ul></ul>
-      </div>
+      <!--  <img
+        src="/images/roulette/marble_body.png"
+        alt=""
+        width="100px"
+        height="100px"
+        style="z-index: 11"
+      /> -->
+    </div>
+
+    <div id="rankings">
+      <h2 style="text-align: center">랭킹</h2>
+      <ul></ul>
     </div>
     <div id="inGame" class="hide settings">
       <button id="btnShake">Shake!</button>
-    </div>
-    <div id="cameraInfo">
-      <span class="">자유시점 ON</span>
-      V 키를 누르면 카메라 모드가 전환됩니다<br />스페이스바 키를 누르면 맵을
-      흔들 수 있습니다
     </div>
     <div class="copyright">
       &copy; 2023.<a href="https://lazygyu.net" target="_blank">lazygyu</a>

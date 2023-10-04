@@ -1,1 +1,1 @@
-sudo docker stop pocotone-excel-app && sudo docker rm pocotone-excel-app && sudo docker rmi pocotone-excel
+sudo docker stop pocotone-excel-app-1 && sudo docker rm pocotone-excel-app-1 && sudo docker stop pocotone-excel-app-2 && sudo docker rm pocotone-excel-app-2 && sudo docker stop pocotone-excel-app-3 && sudo docker rm pocotone-excel-app-3 && sudo docker stop pocotone-excel-app-4 && sudo docker rm pocotone-excel-app-4 && sudo docker rmi pocotone-excel 

@@ -10,7 +10,6 @@ router.use(express.json())
 router.use(express.urlencoded({ extended: false }))
 
 var addr = process.env.NODE_ENV == 'production' ? 'nstream.kr' : 'localhost'
-
 console.log(addr)
 
 function urlCheck(param) {

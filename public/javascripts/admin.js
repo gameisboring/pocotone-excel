@@ -908,8 +908,6 @@ document.getElementById('afreecaHpUrlSetBtn').addEventListener('click', (e) => {
     console.log(result)
     if (result.isConfirmed) {
       socket.emit('urlSetting', result.value)
-      Swal.fire(`${result.value}로 
-      변경되었습니다`)
     }
   })
 })

@@ -118,57 +118,106 @@
       }
       #container {
         display: flex;
+        /* flex-basis: 40rem; */
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 50;
-        width: 100%;
+        width: 80%;
+        max-width: 80%;
+        height: 45%;
         justify-content: center;
         align-items: center;
         transition: all 1s ease-in-out;
       }
-      #rankings {
-        z-index: 10;
+      .unitSettings {
+        font-size: 1.1rem;
+        height: 100%;
+        padding: 0.8rem 1.5rem;
+        box-shadow: inset 0 0 6rem 4px #f27127;
+        background: #d9a84e;
         color: #000;
-        min-height: 40vh;
-        background: #fff;
-        border: 2px solid #f38c0e;
-        border-radius: 0.75rem;
-        flex-direction: column;
-        align-items: center;
-        padding: 0.8rem 3rem;
-        font-size: 3vh;
-        font-weight: bold;
-        width: 25%;
-        height: 20%;
-        transition: all 1s ease-in-out;
-        display: flex;
-        box-shadow: inset 0 0 6rem 4px #fff5ef;
-      }
-      #rankings ul {
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
+        border-radius: 0.75em 0 0 0.75em;
         position: relative;
-        bottom: -2rem;
+        display: flex;
+        flex-direction: column;
+      }
+      .unitSettings h2 {
+        font-size: 3rem;
+        text-align: center;
+        margin: 0;
+      }
+      .unitSettings ul {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        height: 100%;
       }
 
-      #rankings h2 {
+      .max-w-30 {
+        max-width: 30%;
+      }
+      .max-w-20 {
+        max-width: 20%;
+      }
+      .rankings {
+        z-index: 10;
+        color: #000;
+        background: #fff;
+        border: 2px solid #f38c0e;
+        border-radius: 0 0.75rem 0.75rem 0;
+        flex-direction: column;
+        /* flex-grow: 1; */
+        flex-shrink: 1;
+        align-items: center;
+        padding: 0.8rem 2rem;
+        font-size: 2.2rem;
+        font-weight: bold;
+        transition: all 1s ease-in-out;
+        position: relative;
+        display: flex;
+        box-shadow: inset 0 0 6rem 4px #fff5ef;
+        height: 100%;
+        width: auto;
+        word-break: break-all;
+        justify-content: space-between;
+        overflow: auto;
+      }
+      .rankings .ulBox {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+      }
+      .rankings ul {
+        margin: 0;
+        padding: 0;
+        line-height: 2.5rem;
+        list-style-type: none;
+        position: relative;
+        /* bottom: -50%; */
+        /* transform: translate(0, -75%); */
+      }
+
+      .rankings h2 {
         margin: 0;
         position: relative;
         top: 0rem;
+        line-height: 4rem;
       }
       .settings {
         transition: all 1s ease-in-out;
-        /* position: absolute; */
-        /* top: 50%; */
-        /* left: 40%; */
-        /* transform: translate(-15%, -50%); */
+        display: flex;
+        flex-direction: column;
         padding: 1rem;
-        border-radius: 0.75em;
+        width: 50%;
+        /* flex-grow: 2; */
+        flex-shrink: 1;
+        height: 100%;
         box-shadow: inset 0 0 6rem 4px #f27127;
-        border: 2px solid #f38c0e;
+        /* border: 1px solid #f27127; */
         background: #d9a84e;
         backdrop-filter: blur(10px);
         color: #000;
@@ -188,15 +237,18 @@
       }
       .settings textarea {
         width: 100%;
-        min-height: 22rem;
+        /* min-height: 22rem; */
         background-color: transparent;
         border: none;
         outline: none;
         font: inherit;
+        height: calc(100% - 4.3rem);
         color: inherit;
+        padding: 1rem 0;
       }
       .settings .actions {
         font-size: 0.8rem;
+        line-height: 1.1rem;
         text-align: right;
         display: flex;
         justify-content: space-between;
@@ -212,15 +264,18 @@
         justify-content: center;
         align-items: center;
       }
-      .settings button {
-        padding: 0.25rem 0.75rem;
+      .settings button,
+      .unitSettings button {
+        padding: 0.3rem 1rem;
         font-size: 1rem;
         border-radius: 10px;
         border: 0;
+        line-height: 1.3rem;
         flex-grow: 1;
       }
 
-      .settings button:hover {
+      .settings button:hover,
+      .unitSettings button:hover {
         cursor: pointer;
         background-color: rgb(218, 218, 218);
       }
@@ -230,6 +285,7 @@
         font-size: 1rem;
         line-height: 1.2rem;
         color: #000;
+        margin: 0;
       }
 
       input[type='number'] {
@@ -396,13 +452,9 @@
         if (e.length > 0) {
           document.querySelector('#rankings').style.transform =
             'translate(0, 0)'
-          document.querySelector('#settings').style.transform =
-            'translate(0, 0)'
         } else {
           document.querySelector('#rankings').style.transform =
-            'translate(-50%, -0%)'
-          document.querySelector('#settings').style.transform =
-            'translate(50%, -0%)'
+            'translate(-100%, -0%)'
         }
         if (!document.querySelector('#in_names').value == '') {
           document.querySelector('#in_names').value = o.join(',') + ','
@@ -411,7 +463,7 @@
       }
       function renderRank() {
         const rank = getRank()
-        const ul = document.querySelector('#rankings > ul')
+        const ul = document.querySelector('#rankings ul')
         ul.replaceChildren()
         if (rank) {
           for (var i in rank) {
@@ -439,6 +491,7 @@
               window.roullete._camera.setSelfCam(
                 !window.roullete._camera.selfCam
               )
+              window.roullete._camera.keyPressed = {}
 
               document
                 .querySelector('#cameraInfo span')
@@ -478,7 +531,7 @@
             window.roullete._camera.selfUpdate('ArrowLeft')
           }
         }, 10) */
-        document.querySelector('#marbleUnit').value = 54
+        // document.querySelector('#marbleUnit').value = 54
         document.querySelector('#in_names').addEventListener('input', (e) => {
           if (e.data == ',') inputNameFn()
         }),
@@ -505,6 +558,17 @@
                 window.roullete.start())
           }
         }),
+          document
+            .querySelector('.unitSettings button')
+            .addEventListener('click', (e) => {
+              const li = document.createElement('li')
+              const label = document.createElement('label')
+              label.innerHTML = ` 별풍선
+              <input type="number" class="marbleUnit" value="">개 = 구슬
+              <input type="number" class="marbleUnit" value=""> 개`
+              li.append(label)
+              document.querySelector('.unitSettings ul').append(li)
+            }),
           document
             .querySelector('#chkSkill')
             .addEventListener('change', (e) => {
@@ -546,7 +610,10 @@
           window.roullete.addEventListener('goal', () => {
             ;(ready = !1),
               document.querySelector('#container').classList.remove('hideY')
-            window.roullete._camera.setSelfCam(false)
+            window.roullete._camera.setSelfCam(false),
+              document
+                .querySelector('#cameraInfo span')
+                .classList.remove('free')
           }),
           window.roullete.addEventListener('shakeAvailableChanged', (e) => {
             document
@@ -557,6 +624,20 @@
       })
     </script>
     <div id="container">
+      <div class="max-w-20 unitSettings">
+        <h2>등록 기준</h2>
+        <ul>
+          <li>
+            <label>
+              별풍선
+              <input type="number" class="marbleUnit" value="" />개 = 구슬
+              <input type="number" class="marbleUnit" value="" /> 개
+              <span id="marbleUnitEx"></span>
+            </label>
+          </li>
+        </ul>
+        <button>추가</button>
+      </div>
       <div id="settings" class="settings">
         <p class="text">
           각 이름 뒤에 별과 슬래시를 붙여 각 구슬의 수와 가중치를 설정할 수
@@ -568,15 +649,6 @@
           id="in_names"
           placeholder="쉼표나 줄로 구분된 텍스트를 입력하세요"
         ></textarea>
-        <div class="actions">
-          <div class="buttons">
-            <label>
-              별풍선
-              <input type="number" id="marbleUnit" value="" />개 = 구슬 1 개
-              <span id="marbleUnitEx"></span>
-            </label>
-          </div>
-        </div>
 
         <div class="actions">
           <div class="buttons">
@@ -591,7 +663,6 @@
               <button id="btnRandomWinner">랜덤</button>
             </div>
           </div>
-
           <div class="buttons">
             <label>
               <input type="checkbox" id="chkSkill" checked="" /> 스킬 사용
@@ -609,16 +680,16 @@
     style="z-index: 11"
   /> -->
       </div>
-      <div id="rankings">
+      <div id="rankings" class="rankings max-w-30">
         <h2 style="text-align: center">랭킹</h2>
-        <ul></ul>
+        <div class="ulBox"><ul></ul></div>
       </div>
     </div>
     <div id="inGame" class="hide settings">
       <button id="btnShake">Shake!</button>
     </div>
     <div id="cameraInfo">
-      <span class="">자유시점 ON</span>
+      <span class="" style="color: red">자유시점 ON</span>
       V 키를 누르면 카메라 모드가 전환됩니다<br />스페이스바 키를 누르면 맵을
       흔들 수 있습니다
     </div>

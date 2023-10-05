@@ -35,28 +35,6 @@ module.exports = async (server) => {
     )
 
     const url_ws_afreehp = 'ws://110.10.76.66:8060/Websocket'
-    /*const _socketAfreehp = new WebSocket(
-      'ws://' + '110.10.76.66' + ':' + '8060' + '/Websocket',
-      'chat'
-    )
-    _socketAfreehp.binaryType = 'arraybuffer'
-
-    _socketAfreehp.onopen = function (e) {
-      console.log('eee')
-      var chatToken =
-        '.A32.7bbT56vyHM9fKZk.2RbqkdaE1VyAJcvr8zFej3vpzYaJz25rQWshCTIHWpclpMgtu1YdWRAf_dZBJ_KGibfDyKbcsX7RvlW2e7wxsWmb6PYx9mJCOXQimWf5f6Ffv4fcRWGfhum4Lzni2Ejan30-Lsbch4qMXBGw8QzuhHJHdpQPQUDfcAZWczivJiwuBo-sbf6plicuXo3yCleQAV078YbPw3xMEjZg-URn8cy_H55jwNno61ZqS0kAPoBTfGsJX_bKGcLiofmnS_7vcJQIBx2gAEga90lLKrdQj8fFazZZm6KTJKmtC5RzubB9MSiZ9vEdmH3ipMLK4n2ibtqhL_hGd4aBlqvjSQgUnZtBa6S1qF1UW05LM1mcCgVxMuAX0FjSzNrKrN-1TbiN9ZTel_FKWBki7dooY-U4zCFsf_QQECZKoxv9usnyic8U6AvVSBsu4NkrGpeaW3CN8odLNROGWqvlPkc2kivCx-JqPK82IkMzhVGrpNh6mGWh8OmqBFrcV7YHp4LH_9_OIC213vXCXGudZuIOTBMzZS0D3V_VjnI4CIQ_fSfyTjU'
-      _socketAfreehp.send(afreeca.login(chatToken, '', 4))
-      _socketAfreehp.send(afreeca.joinch())
-    }
-
-    _socketAfreehp.onmessage = function (e) {
-      var t = null
-      e.data instanceof ArrayBuffer
-        ? ((t = e.data), afreeca.parseMessage(t, _socketAfreehp))
-        : (t = afreeca.readBuffer(e.data, _socketAfreehp))
-      console.log(t)
-    }
- */
     const socketAfreehp = io(url_ws_afreehp, {
       transports: ['websocket'],
       reconnection: true,

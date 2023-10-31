@@ -42,15 +42,6 @@ module.exports = async (server) => {
       autoConnect: false,
     })
 
-    // to get all packet
-    var onevent = socketAfreehp.onevent
-    socketAfreehp.onevent = function (packet) {
-      var args = packet.data || []
-      onevent.call(this, packet) // original call
-      packet.data = ['*'].concat(args)
-      onevent.call(this, packet) // additional call to catch-all
-    }
-
     var page = {
       idx: settings.afreehp.idx,
       // pagelist: [{pageid: "alert", subpage: "0"}],
@@ -71,7 +62,7 @@ module.exports = async (server) => {
       // socket.send("pagecmd", pagecmd);
     })
 
-    /* socketAfreehp.on('cmd', async (data) => {
+    socketAfreehp.on('cmd', async (data) => {
       var config = getConfigFile()
       try {
         if (
@@ -122,7 +113,7 @@ module.exports = async (server) => {
       } catch (e) {
         logger.error('Afreehp message parse error: ', e.toString())
       }
-    }) */
+    })
 
     /*     socketAfreehp.on('error', () => {
       logger.error('Afreehp error')
